@@ -1,0 +1,15 @@
+# Nix build results
+result
+result-*
+
+# Editor files
+*.swp
+*.swo
+*~
+
+# Direnv
+.direnv
+.envrc
+
+# Nix garbage
+.direnv/
