@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   inputs,
   ...
 }:
@@ -10,17 +11,30 @@
     ./hardware-configuration.nix
     ./hardware.nix
     ./declaration.nix
+    ./package_configuration/hermes.nix
   ];
-
+  nixpkgs.config.allowUnfree = true;  
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
 
   # Bootloader
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot = {
+    loader = {
+     efi.canTouchEfiVariables = true;
+     systemd-boot.enable = lib.mkForce false;
+     limine = {
+      enable = true;
+      enrollConfig = true;
+      panicOnChecksumMismatch =true;
+      maxGenerations = 10;
+     };
+    };    
+  };
+  
+  # Entrada manual para Windows
+   boot.kernelPackages = pkgs.linuxPackages_latest;
   # Rust kernel support is built into linuxPackages_latest via config.
   # To customize kernel features, use extraStructuredConfig:
   # boot.kernelPatches = [{ name = "Rust"; patch = null;
@@ -32,6 +46,11 @@
   time.timeZone = "America/Los_Angeles";
 
   i18n.defaultLocale = "en_US.UTF-8";
+  i18n.supportedLocales = [
+   "en_US.UTF-8/UTF-8"
+   "zh_CN.UTF-8/UTF-8"
+  ];
+
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
     LC_IDENTIFICATION = "en_US.UTF-8";
@@ -43,6 +62,29 @@
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
+  fonts.packages = with pkgs; [
+    noto-fonts-cjk-sans
+    noto-fonts-cjk-serif
+    noto-fonts-color-emoji
+    nerd-fonts.fira-code
+    nerd-fonts.droid-sans-mono
+    nerd-fonts.noto
+    nerd-fonts.hack
+  ];
+
+  i18n.inputMethod = {
+    enable = true;
+    type = "fcitx5";
+    fcitx5 = {
+      waylandFrontend = true;
+      addons = with pkgs; [
+        qt6Packages.fcitx5-chinese-addons  # ✅ Use the new package name
+        fcitx5-gtk
+      ];
+    };
+  };
+
+  services.gnome.gnome-keyring.enable = true;
 
   # X11 and GNOME
   services.xserver.enable = true;
@@ -55,8 +97,11 @@
 
   # Printing
   services.printing.enable = true;
+  hardware.openrazer.enable = true;
 
   # Sound with PipeWire
+  services.dbus.enable = true;
+  services.dbus.implementation = "broker";
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -64,6 +109,7 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    wireplumber.enable = true;
   };
 
   # TPM2
@@ -76,7 +122,7 @@
   };
 
   # User account
-  users.users.l3onav = {
+  users.users.comrade = {
     isNormalUser = true;
     description = "Leonardo";
     extraGroups = [
@@ -85,10 +131,17 @@
       "video"
       "adbusers"
       "libvirtd"
+      "audio"
+      "realtime"
+      "pipewire"
+      "openrazer"
+      "hermes"
     ];
     packages = with pkgs; [ thunderbird ];
   };
-
+  nixpkgs.config.permittedInsecurePackages = [
+                "ventoy-1.1.12"
+              ]; 
   # System packages
   environment.systemPackages = with pkgs; [
     vim
@@ -98,8 +151,8 @@
     xwallpaper
     pcmanfm
     rofi
-    _1password-cli
-    _1password-gui
+    #_1password-cli
+    #_1password-gui
     clock-rs
     pipes
     killall
@@ -112,10 +165,48 @@
     quickshell
     grim
     gnome-tweaks
-    bottles
     power-profiles-daemon
     android-tools
+    inputs.helium.packages.${system}.default
+    brave
+    mangohud
+    openrazer-daemon
+    protonup-qt
+    lutris
+    bottles
+    heroic
+    polychromatic
+    fcitx5
+    zsh-powerlevel10k
+    meslo-lgs-nf # Recommended Nerd Font
+    anki
+    libreoffice
+    uv
+    nvidia-container-toolkit
+    ventoy-full
+    sbctl
+    limine-full
   ];
 
+  security.sudo.extraRules = [{
+    users = [ "comrade" ];
+    commands = [{
+      command = "/run/current-system/sw/bin/podman";
+      options = [ "NOPASSWD" ];
+    }];
+  }];
+  hardware.nvidia-container-toolkit.enable = true;
+
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    promptInit = ''
+      source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+    '';
+  };
+  users.users.comrade = {
+   shell = pkgs.zsh;
+  };
+  users.defaultUserShell = pkgs.zsh;
   system.stateVersion = "25.11";
 }

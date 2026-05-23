@@ -1,33 +1,29 @@
 { config, pkgs, ... }:
 
 {
-  home.username = "l3onav";
-  home.homeDirectory = "/home/l3onav";
+  home.username = "comrade";
+  home.homeDirectory = "/home/comrade";
   home.stateVersion = "25.11";
 
   home.packages = with pkgs; [
-    git
     gh
     jujutsu
     zig
     nushell
-    alacritty
-    fzf
-    direnv
     fastfetch
-    btop
     zellij
-    neovim
     zed-editor
     ripgrep
     fd
-    bat
-    eza
-    zoxide
     tlrc
     podman-tui
     podman-compose
     dive
+    discord
+    wgnord
+    gnomeExtensions.razer-puppy
+    razergenie
+    spotify
   ];
 
   home.sessionVariables = {
@@ -53,33 +49,6 @@
     vimAlias = true;
     withRuby = false;
     withPython3 = false;
-  };
-
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
-    oh-my-zsh = {
-      enable = true;
-      plugins = [
-        "git"
-        "python"
-        "man"
-      ];
-      theme = "agnoster";
-    };
-    shellAliases = {
-      ll = "eza -l";
-      la = "eza -la";
-      lt = "eza --tree";
-      v = "nvim";
-      c = "clear";
-    };
-    initContent = ''
-      eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
-      eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
-    '';
   };
 
   programs.direnv = {
@@ -132,7 +101,11 @@
       };
       font = {
         size = 11;
-        normal.family = "JetBrains Mono";
+        normal.family = "FiraCode Nerd Font Mono";
+	bold.family = "FiraCode Nerd Font Mono";
+	bold.style = "Bold";
+	italic.family = "FiraCode Nerd Font Mono";
+	italic.style = "Italic";
       };
     };
   };
