@@ -46,12 +46,13 @@
       user = {
         name = "Leonardo Nava (L3oNav)";
         email = "l3onav@outlook.com";
-        signingkey = "SHA256:gOHzZceZAXYwZR0nq/frpwVbWt011l9JcorGBS18Ojk";  # ← Replace with your SSH key fingerprint from 1Password
+        signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwRbVMLmqtlo7TYoOaPWegtlYdlizxBGC+wX9DDWHPq";
       };
       init.defaultBranch = "main";
       push.autoSetupRemote = true;
       commit.gpgsign = true;
       gpg.format = "ssh";
+      gpg.ssh.program = "${pkgs._1password-gui}/bin/op-ssh-sign";
       gpg.ssh.allowedSignersFile = "${config.xdg.configHome}/git/allowed-signers";
       tag.gpgsign = true;
       url = {
