@@ -4,14 +4,14 @@
   inputs = {
 
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixpkgs-25.11";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
 
     nix-snapd.url = "github:nix-community/nix-snapd";
     nix-snapd.inputs.nixpkgs.follows = "nixpkgs";
 
     nix-rosetta-builder.url = "github:cpick/nix-rosetta-builder";
     nix-rosetta-builder.inputs.nixpkgs.follows = "nixpkgs";
- 
+
     nix-gaming.url = "github:fufexan/nix-gaming";
 
     home-manager = {
@@ -28,7 +28,7 @@
     theme-bobthefish.flake = false;
 
     hermes-agent.url = "github:NousResearch/hermes-agent";
- };
+  };
 
   outputs =
     {
@@ -37,13 +37,24 @@
       home-manager,
       hermes-agent,
       nixpkgs-stable,
-      nix-gaming, 
+      nix-gaming,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
       overlays = [
-
+        (final: prev: {
+          openldap = prev.openldap.overrideAttrs (_: {
+            doCheck = false;
+          });
+          python3 = prev.python3.override {
+            packageOverrides = pyFinal: pyPrev: {
+              tpm2-pytss = pyPrev.tpm2-pytss.overridePythonAttrs (_: {
+                doCheck = false;
+              });
+            };
+          };
+        })
       ];
     in
     {
@@ -51,15 +62,11 @@
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
-	  hermes-agent.nixosModules.default
+          hermes-agent.nixosModules.default
           ./configuration.nix
-          { 
-	    nixpkgs.overlays = [(final: prev: {
-              openldap = prev.openldap.overrideAttrs (_: {
-                doCheck = false;
-              });
-            })];
-	  }
+          {
+            nixpkgs.overlays = overlays;
+          }
           home-manager.nixosModules.home-manager
           {
             home-manager = {
