@@ -29,6 +29,12 @@
         enrollConfig = true;
         panicOnChecksumMismatch = true;
         maxGenerations = 10;
+        extraEntries = ''
+          :Windows
+              protocol: efi_chainload
+              comment: Windows 11
+              path: boot():/EFI/Microsoft/Boot/bootmgfw.efi
+        '';
       };
     };
   };
@@ -186,6 +192,13 @@
     ventoy-full
     sbctl
     limine-full
+    docker-compose
+    docker
+    lnav
+    ripgrep
+    tree
+    xsel
+
   ];
 
   security.sudo.extraRules = [
@@ -200,12 +213,22 @@
     }
   ];
   hardware.nvidia-container-toolkit.enable = true;
-
   programs.zsh.enable = true;
 
   users.users.comrade = {
    shell = pkgs.zsh;
   };
   users.defaultUserShell = pkgs.zsh;
+  nix = {
+      # Automate garbage collection
+      gc = {
+        automatic = true;
+        dates = "weekly";
+        options = "--delete-older-than 7d";
+      };
+
+      # Flakes settings
+      package = pkgs.nixVersions.latest;
+  };
   system.stateVersion = "25.11";
 }
