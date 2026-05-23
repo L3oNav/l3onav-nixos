@@ -11,7 +11,7 @@
     ./hardware-configuration.nix
     ./hardware.nix
     ./declaration.nix
-    ./package_configuration/hermes.nix
+    ./packages/hermes.nix
   ];
   nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = [
