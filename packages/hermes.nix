@@ -2,17 +2,21 @@
 
 {
   services.hermes-agent = {
-    enable = false;
-    addToSystemPackages = false;
+    enable = true;
+    addToSystemPackages = true;
 
     # ── Container ─────────────────────────────────────────────
     container = {
-      enable = false;
+      enable = true;
       backend = "podman";
       hostUsers = [ "comrade" ];
       extraOptions = [
         "--gpus=all"
         "--security-opt=label=disable"
+      ];
+      # Mount host paths that MCP servers need access to.
+      extraVolumes = [
+        "/home/comrade:/home/comrade"
       ];
     };
 
@@ -27,18 +31,38 @@
       # (the service is already containerized via Podman)
       terminal = {
         backend = "local";
-        timeout = 181;
+        timeout = 180;
       };
 
       # Agent behavior
-      max_turns = 101;
+      max_turns = 100;
       toolsets = [ "all" ];
     };
 
-    # ── Secrets ───────────────────────────────────────────────
-    # Create this file with your DeepSeek API key:
-    #   echo "DEEPSEEK_API_KEY=sk-your-key" | sudo install -m 0601 -o hermes /dev/stdin /var/lib/hermes/env
-    # Then uncomment the line below and rebuild:
+    # ── MCP Servers ───────────────────────────────────────────
+    mcpServers = {
+      # Anki — flashcard management and study automation.
+      anki = {
+        url = "http://127.0.0.1:3141";
+        timeout = 30;
+      };
+
+      # Obsidian — local Obsidian vault access via MCP.
+      obsidian = {
+        url = "https://127.0.0.1:27124/mcp/";
+        headers.Authorization = "Bearer 57586db1d24a9f1409c825fd1c0f2c9891c8c6d2df2d5695756ce20f7cfd33ab";
+        timeout = 30;
+      };
+
+    };
+
     environmentFiles = [ "/var/lib/hermes/env" ];
+
+    # Extra packages the agent can use inside the container
+    extraPackages = with pkgs; [
+      nodejs_22
+      git
+      ripgrep
+    ];
   };
 }
