@@ -201,15 +201,10 @@
   ];
   hardware.nvidia-container-toolkit.enable = true;
 
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    promptInit = ''
-      source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-    '';
-  };
+  programs.zsh.enable = true;
+
   users.users.comrade = {
-    shell = pkgs.zsh;
+   shell = pkgs.zsh;
   };
   users.defaultUserShell = pkgs.zsh;
   system.stateVersion = "25.11";

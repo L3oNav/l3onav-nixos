@@ -73,7 +73,7 @@
 
   programs.bat = {
     enable = true;
-    config.theme = "TwoDark";
+    config.theme = "gruvbox-dark";
   };
 
   programs.eza = {
@@ -107,6 +107,102 @@
         italic.family = "FiraCode Nerd Font Mono";
         italic.style = "Italic";
       };
+      colors = {
+        primary = {
+          background = "0x282828";
+          foreground = "0xebdbb2";
+        };
+        normal = {
+          black   = "0x282828";
+          red     = "0xcc241d";
+          green   = "0x98971a";
+          yellow  = "0xd79921";
+          blue    = "0x458588";
+          magenta = "0xb16286";
+          cyan    = "0x689d6a";
+          white   = "0xa89984";
+        };
+        bright = {
+          black   = "0x928374";
+          red     = "0xfb4934";
+          green   = "0xb8bb26";
+          yellow  = "0xfabd2f";
+          blue    = "0x83a598";
+          magenta = "0xd3869b";
+          cyan    = "0x8ec07c";
+          white   = "0xebdbb2";
+        };
+      };
     };
+  };
+
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    historySubstringSearch.enable = true;
+    plugins = with pkgs; [
+      {
+        name = "zsh-completions";
+        src = zsh-completions;
+      }
+      {
+        name = "zsh-nix-shell";
+        src = zsh-nix-shell;
+      }
+      {
+        name = "nix-zsh-completions";
+        src = nix-zsh-completions;
+      }
+      {
+        name = "you-should-use";
+        src = zsh-you-should-use;
+      }
+    ];
+
+    history = {
+      size = 10000;
+      path = "${config.xdg.dataHome}/zsh/history";
+      ignoreDups = true;
+      ignoreSpace = true;
+      expireDuplicatesFirst = true;
+      share = true;
+    };
+
+    shellAliases = {
+      ll = "eza -la --icons --git --group-directories-first";
+      ls = "eza --icons --git";
+      la = "eza -a --icons --git";
+      lt = "eza --tree --icons --level=2";
+      cat = "bat --style=plain";
+      v = "nvim";
+      g = "git";
+      j = "z";
+      ".." = "cd ..";
+      "..." = "cd ../..";
+      ".4" = "cd ../../../..";
+      c = "clear";
+      r = "sudo nixos-rebuild switch --flake /etc/nixos#comrade";
+      u = "nix flake update";
+    };
+
+    initContent = ''
+      # Enable Powerlevel10k instant prompt
+      if [[ -r "${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+        source "${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme"
+      fi
+
+      # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+      [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+      # Bind history-substring-search for UP/DOWN keys
+      bindkey '^[[A' history-substring-search-up
+      bindkey '^[[B' history-substring-search-down
+
+      # Alt+Left/Right word navigation
+      bindkey '^[[1;3D' backward-word
+      bindkey '^[[1;3C' forward-word
+    '';
   };
 }
