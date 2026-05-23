@@ -29,6 +29,7 @@
         enrollConfig = true;
         panicOnChecksumMismatch = true;
         maxGenerations = 10;
+        secureBoot.enable = true;
         extraEntries = ''
           :Windows
               protocol: efi_chainload
