@@ -1,14 +1,15 @@
 # l3onav-nixos — Painless NixOS Configuration
 
 A modern, flake-based NixOS configuration with Home Manager integration,
-GNOME desktop, NVIDIA graphics, and a curated development environment.
+GNOME desktop, NVIDIA graphics, Secure Boot via sbctl, and a curated
+development environment.
 
 ## Quick Start
 
 ```bash
 # 1. Boot the NixOS ISO and connect to the internet
 
-# 2. Partition your disk (example using ext4 + systemd-boot)
+# 2. Partition your disk (example using ext4 + EFI)
 sudo parted /dev/nvme0n1 -- mklabel gpt
 sudo parted /dev/nvme0n1 -- mkpart ESP fat32 1MiB 1024MiB
 sudo parted /dev/nvme0n1 -- set 1 esp on
@@ -32,7 +33,8 @@ sudo git clone https://github.com/l3onav/l3onav-nixos.git .
 # 6. Replace the placeholder hardware-configuration.nix with the generated one
 #    (hardware.nix with GPU/CPU tweaks is preserved)
 sudo cp /mnt/etc/nixos/hardware-configuration.nix \
-        /mnt/etc/nixos/hardware-configuration.nix
+        /mnt/etc/nixos/hardware-configuration.nix.backup
+# ... then copy your generated hardware-configuration.nix over the placeholder
 
 # 7. Install NixOS
 sudo nixos-install --flake /mnt/etc/nixos#comrade
@@ -43,23 +45,21 @@ sudo reboot
 
 ## Post-Installation
 
-After reboot, log in as `l3onav` and set your password:
+After reboot, log in as `comrade` and set your password:
 
 ```bash
-# Set user password (run as root or from a TTY)
-sudo passwd l3onav
+sudo passwd comrade
 ```
 
-Home Manager will activate automatically on first login. Your shell (Zsh with
-Oh-My-Zsh), editor (Neovim), terminal (Alacritty), and all configured tools
-will be ready.
+Home Manager activates automatically on first login. Your shell (Zsh with
+powerlevel10k and plugins), editor (Neovim), terminal (Alacritty with Gruvbox),
+and all configured tools will be ready.
 
 ### Updating the System
 
 ```bash
-# From within the config directory
 cd /etc/nixos
-sudo nix flake update   # Update flake inputs
+sudo nix flake update        # Update flake inputs
 sudo nixos-rebuild switch --flake .#comrade
 ```
 
@@ -73,14 +73,16 @@ nix fmt
 
 ```
 l3onav-nixos/
-├── flake.nix                    # Flake entry point: inputs, outputs, overlays
-├── flake.lock                   # Pinned dependency versions (auto-generated)
-├── configuration.nix            # Main NixOS system configuration
-├── hardware-configuration.nix   # Auto-generated hardware config (fileSystems, boot)
-├── hardware.nix                 # Extra hardware tweaks (GPU, CPU, NVIDIA)
-├── declaration.nix              # Additional services and programs
-├── home.nix                     # Home Manager user environment
-└── README.md                    # This file
+├── flake.nix                       # Flake entry point: inputs, outputs, overlays
+├── flake.lock                      # Pinned dependency versions (auto-generated)
+├── configuration.nix               # Main NixOS system configuration
+├── hardware-configuration.nix      # Auto-generated hardware config (fileSystems, boot)
+├── hardware.nix                    # Extra hardware tweaks (GPU, CPU, NVIDIA)
+├── declaration.nix                 # Additional services and programs
+├── home.nix                        # Home Manager user environment
+├── package_configuration/
+│   └── hermes.nix                  # Hermes AI agent service (DeepSeek)
+└── README.md
 ```
 
 ### File Roles
@@ -93,58 +95,224 @@ l3onav-nixos/
 | `hardware.nix` | Manual GPU/CPU/firmware tweaks | Yes — adjust drivers, CPU governor |
 | `declaration.nix` | Service declarations: Steam, Podman, SSH, etc. | Yes — enable/disable services |
 | `home.nix` | User environment: shell, editor, dev tools | Yes — your dotfiles |
+| `package_configuration/hermes.nix` | Hermes AI agent configuration | Yes — change model/provider |
 
-### configuration.nix
+## System Configuration (`configuration.nix`)
 
-Core system configuration:
+### Boot
 
 | Feature | Details |
 |---------|---------|
-| Bootloader | systemd-boot with EFI |
-| Kernel | Latest Linux (Rust support built-in) |
+| Bootloader | **Limine** with EFI support (systemd-boot disabled) |
+| Secure Boot | Signed via `sbctl` with custom keys |
+| Windows | Dual-boot entry via EFI chainload |
+| Kernel | Latest Linux (`linuxPackages_latest`) |
+| Max generations | 10 (kept in the boot menu) |
+
+### Desktop & Input
+
+| Feature | Details |
+|---------|---------|
 | Desktop | GNOME with GDM |
-| Sound | PipeWire (ALSA + PulseAudio compatibility) |
-| Security | TPM2 with ABRMD and PKCS#11 |
+| Input method | Fcitx5 with Chinese addons + Wayland frontend |
+| Locale | `en_US.UTF-8` primary, `zh_CN.UTF-8` supported |
+| Fonts | Noto CJK, Noto Color Emoji, Nerd Fonts (Fira Code, Droid Sans, Noto, Hack) |
+
+### Sound & Hardware
+
+| Feature | Details |
+|---------|---------|
+| Sound | PipeWire (ALSA + PulseAudio compatibility, WirePlumber) |
+| D-Bus | `dbus-broker` implementation |
+| Printing | CUPS enabled |
+| OpenRazer | Enabled for Razer peripherals |
+
+### Security
+
+| Feature | Details |
+|---------|---------|
+| TPM2 | Enabled with ABRMD, PKCS#11, TCTI (tabrmd) |
+| Secure Boot | `sbctl` with Limine signing |
+| Sudo | NOPASSWD for `podman` |
+
+### Networking & User
+
+| Feature | Details |
+|---------|---------|
+| Hostname | `nixos` |
 | Networking | NetworkManager |
-| User | `l3onav` with wheel, video, adbusers, libvirtd groups |
-| System packages | Vim, Git, 1Password, OBS Studio, and more |
+| User | `comrade` (wheel, video, adbusers, libvirtd, audio, pipewire, openrazer, hermes) |
+| Shell | Zsh (default for all users) |
+| Nix GC | Automatic weekly, deletes older than 7 days |
 
-### hardware.nix
+### System Packages
 
-Hardware-specific extras:
+| Category | Packages |
+|----------|----------|
+| Editor | vim |
+| Browser | Brave |
+| Terminal | Alacritty |
+| File manager | pcmanfm |
+| Password manager | 1Password GUI |
+| Office | LibreOffice, Anki, Obsidian |
+| Media | OBS Studio, ffmpeg |
+| Gaming | Steam, Lutris, Bottles, Heroic, MangoHud, ProtonUp-Qt, GameMode, Polychromatic |
+| Android | android-tools |
+| Tools | ripgrep, fd, tree, lnav, xsel, quickshell, grim, rofi, ventoy, p7zip |
+| Nix | sbctl, limine-full, nvidia-container-toolkit |
+| Python | uv |
+| Prompt | zsh-powerlevel10k, meslo-lgs-nf |
+| 1Password | _1password-gui |
+
+## Hardware (`hardware.nix`)
 
 | Component | Configuration |
 |-----------|---------------|
-| GPU | NVIDIA with modesetting, proprietary drivers |
-| CPU | AMD microcode updates, performance governor |
-| Graphics | 32-bit OpenGL support for Steam/gaming |
+| GPU | NVIDIA proprietary drivers (stable), modesetting, 32-bit OpenGL |
+| CPU | AMD microcode updates, `performance` governor |
+| Graphics | Hardware acceleration enabled |
 
-### declaration.nix
+## Services (`declaration.nix`)
 
-Additional services enabled:
+| Service | Details |
+|---------|---------|
+| Firefox | Enabled (unfree packages allowed) |
+| Steam | Gamescope session, Remote Play, dedicated server |
+| GameMode | GPU optimizations, process renicing |
+| OpenSSH | Daemon enabled |
+| Podman | Docker-compatible, NVIDIA GPU support, DNS enabled |
+| CDI | NVIDIA container toolkit CDI config wired |
 
-- Firefox (with unfree packages allowed)
-- Steam with Gamescope and Remote Play
-- GameMode for gaming performance
-- OpenSSH daemon
-- Podman with Docker compatibility
-- Container support
+## Home Manager (`home.nix`)
 
-### home.nix
+### Shell — Zsh
 
-Home Manager user configuration:
+| Feature | Details |
+|---------|---------|
+| Prompt | Powerlevel10k (instant prompt, `p10k configure` to customize) |
+| Autosuggestions | Fish-style inline suggestions |
+| Syntax highlighting | Real-time command coloring |
+| History search | ↑/↓ to search by typed prefix |
+| Plugins | zsh-completions, zsh-nix-shell, nix-zsh-completions, you-should-use |
+| History | 10,000 entries, deduplicated, shared across sessions |
+| Key bindings | Alt+←/→ word navigation |
+
+#### Shell Aliases
+
+| Alias | Command |
+|-------|---------|
+| `ll` | `eza -la --icons --git --group-directories-first` |
+| `ls` | `eza --icons --git` |
+| `la` | `eza -a --icons --git` |
+| `lt` | `eza --tree --icons --level=2` |
+| `cat` | `bat --style=plain` |
+| `v` | `nvim` |
+| `g` | `git` |
+| `j` | `z` (zoxide jump) |
+| `..` | `cd ..` |
+| `...` | `cd ../..` |
+| `.4` | `cd ../../../..` |
+| `c` | `clear` |
+| `r` | `sudo nixos-rebuild switch --flake /etc/nixos#comrade` |
+| `u` | `nix flake update` |
+
+### Git — 1Password SSH Integration
+
+| Setting | Value | Purpose |
+|---------|-------|---------|
+| `gpg.format` | `ssh` | Sign commits with SSH keys |
+| `gpg.ssh.program` | `op-ssh-sign` | 1Password's signer binary |
+| `commit.gpgsign` | `true` | Auto-sign every commit |
+| `tag.gpgsign` | `true` | Auto-sign every tag |
+| `url.insteadOf` | `git@github.com:` ← `https://github.com/` | Force SSH remotes |
+| `SSH_AUTH_SOCK` | `~/.1password/agent.sock` | 1Password SSH agent |
+
+### Terminal — Alacritty
+
+| Feature | Details |
+|---------|---------|
+| Font | FiraCode Nerd Font Mono, 11pt |
+| Padding | 10px, dynamic |
+| Color scheme | **Gruvbox Dark** (`#282828` background, `#ebdbb2` foreground) |
+
+### Tools
 
 | Tool | Configuration |
 |------|---------------|
-| Shell | Zsh + Oh-My-Zsh (agnoster theme, git/python/man plugins) |
-| Editor | Neovim with vim aliases |
-| Git | Main branch, auto-setup-remote |
-| Terminal | Alacritty (JetBrains Mono, dynamic padding) |
-| Prompt Tools | Fzf, Zoxide, Direnv |
-| File Tools | Bat (TwoDark theme), Eza (modern ls) |
-| Monitoring | Btop (dracula theme, vim keys) |
-| Dev Tools | Gh, Jujutsu, Zig, Ripgrep, Fd, Tlrc |
-| Containers | Podman TUI, Podman Compose, Dive |
+| Neovim | Default editor, vi/vim aliases |
+| Git | Signing via 1Password SSH key, auto-sign, main branch |
+| Fzf | `fd --type f` default, reverse layout with border |
+| Zoxide | Zsh integration (`z` / `j` command) |
+| Bat | Gruvbox-dark theme |
+| Eza | Zsh integration (modern `ls` replacement) |
+| Btop | Dracula theme, vim keys |
+| Direnv | Enabled with nix-direnv |
+
+### User Packages
+
+| Category | Packages |
+|----------|----------|
+| Dev CLI | `gh`, `zig`, `ripgrep`, `fd` |
+| VCS | `jujutsu` (jj) |
+| Shell | `nushell` |
+| Terminal | `zellij` (multiplexer), `fastfetch` |
+| Editor | `zed-editor` |
+| Containers | `podman-tui`, `podman-compose`, `dive` |
+| Media | `spotify`, `discord` |
+| VPN | `wgnord` |
+| Razer | `razergenie`, `gnomeExtensions.razer-puppy` |
+| Docs | `tlrc` (tldr client) |
+
+## Flake Inputs
+
+| Input | Source | Purpose |
+|-------|--------|---------|
+| `nixpkgs` | `nixpkgs-unstable` | Primary package repository |
+| `nixpkgs-stable` | `nixos-25.11` | Stable fallback |
+| `home-manager` | `nix-community/home-manager` | User environment management |
+| `nix-snapd` | `nix-community/nix-snapd` | Snap package support |
+| `nix-rosetta-builder` | `cpick/nix-rosetta-builder` | macOS Rosetta builder |
+| `nix-gaming` | `fufexan/nix-gaming` | Gaming packages and modules |
+| `helium` | `AlvaroParker/helium-nix` | Custom package (injected via overlay) |
+| `hermes-agent` | `NousResearch/hermes-agent` | AI coding agent (DeepSeek) |
+| `theme-bobthefish` | `oh-my-fish/theme-bobthefish` | Fish shell theme (pinned commit) |
+
+### Build Overlays
+
+| Package | Fix |
+|---------|-----|
+| `openldap` | `doCheck = false` (test suite unstable on rolling nixpkgs) |
+| `tpm2-pytss` | `doCheck = false` (Python 3.13 test compatibility) |
+
+## Hermes AI Agent
+
+Configured in `package_configuration/hermes.nix`:
+
+| Setting | Value |
+|---------|-------|
+| Model | `deepseek-v4-pro` |
+| Provider | DeepSeek (`https://api.deepseek.com/`) |
+| Backend | Podman (containerized) |
+| GPU | NVIDIA passthrough (`--gpus=all`) |
+| Host user | `comrade` (no sudo required) |
+
+## Secure Boot
+
+This configuration uses `sbctl` with Limine for Secure Boot:
+
+```bash
+# Check signing status
+sudo sbctl verify
+
+# Generate keys (first time only)
+sudo sbctl create-keys
+
+# Enroll keys (requires Setup Mode in UEFI)
+sudo sbctl enroll-keys -m -f
+```
+
+On every rebuild, Limine and kernel images are automatically signed via
+`boot.loader.limine.secureBoot.enable = true`.
 
 ## Customization
 
@@ -172,13 +340,12 @@ networking.hostName = "your-hostname";
    users.youruser = import ./home.nix;
    ```
 
-### Adding a New User Package
+### Adding a User Package
 
 Add to `home.nix` under `home.packages`:
 
 ```nix
 home.packages = with pkgs; [
-  # ... existing packages
   your-new-package
 ];
 ```
@@ -190,44 +357,46 @@ Add to `declaration.nix` or `configuration.nix`:
 ```nix
 services.your-service = {
   enable = true;
-  # ... service options
 };
 ```
 
+### Changing the Git Signing Key
+
+1. In 1Password, open your SSH key item
+2. Copy the public key
+3. Update `home.nix`:
+   ```nix
+   user.signingkey = "ssh-ed25519 AAAAC3NzaC1...";
+   ```
+4. Update the allowed signers file:
+   ```bash
+   echo "email@example.com ssh-ed25519 AAAAC3NzaC1..." > ~/.config/git/allowed-signers
+   ```
+
 ### Switching to Stable Nixpkgs
 
-If you prefer stability over bleeding-edge:
+```nix
+# flake.nix
+nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+home-manager.url = "github:nix-community/home-manager/release-25.11";
+```
 
-1. Edit `flake.nix`:
-   ```nix
-   nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-   ```
-2. Update home-manager to the release branch:
-   ```nix
-   home-manager.url = "github:nix-community/home-manager/release-25.11";
-   ```
-3. Run `nix flake update` and `sudo nixos-rebuild switch`
+Then run `nix flake update` and `sudo nixos-rebuild switch`.
 
 ## Troubleshooting
 
 ### "fileSystems option does not specify your root file system"
 
-Run `nixos-generate-config --root /mnt` to generate the proper hardware
-configuration, then copy it over the placeholder:
-
-```bash
-sudo cp /mnt/etc/nixos/hardware-configuration.nix \
-        /mnt/etc/nixos/hardware-configuration.nix
-```
+Run `nixos-generate-config --root /mnt` and copy the generated
+`hardware-configuration.nix` over the placeholder.
 
 ### "Git tree is dirty"
 
-This warning appears when there are uncommitted changes. Commit your changes
-or add files to `.gitignore` if you don't want to track them.
+Commit your changes or add files to `.gitignore`.
 
 ### "package not found" errors
 
-Run `nix flake update` to refresh package indices, then try again.
+Run `nix flake update` to refresh package indices.
 
 ### NVIDIA issues
 
@@ -235,12 +404,33 @@ Run `nix flake update` to refresh package indices, then try again.
 - Try `hardware.nvidia.open = true` for the open-source kernel module
 - For Wayland issues, ensure your kernel version is recent
 
+### Secure Boot — unsigned files
+
+```bash
+sudo sbctl verify          # Check what's unsigned
+sudo sbctl sign-all        # Sign all files
+```
+
+### 1Password SSH agent not working
+
+1. Open 1Password → Settings → Developer → **Use the SSH Agent**
+2. Verify the socket exists: `ls -la ~/.1password/agent.sock`
+3. Test: `SSH_AUTH_SOCK=~/.1password/agent.sock ssh-add -l`
+
+### Windows not showing in boot menu
+
+Check that `/boot/EFI/Microsoft/Boot/bootmgfw.efi` exists.
+The Limine entry is configured via `boot.loader.limine.extraEntries`.
+
 ## Credits
 
 - [NixOS](https://nixos.org/) — The purely functional Linux distribution
-- [Home Manager](https://nix-community.github.io/home-manager/) — Declarative user environment management
-- [nix-snapd](https://github.com/nix-community/nix-snapd) — Snap package support
-- [nix-rosetta-builder](https://github.com/cpick/nix-rosetta-builder) — macOS Rosetta builder
+- [Home Manager](https://nix-community.github.io/home-manager/) — Declarative user environment
+- [Limine](https://limine-bootloader.org/) — Modern multi-protocol bootloader
+- [1Password SSH Agent](https://developer.1password.com/docs/ssh/) — SSH key management
+- [sbctl](https://github.com/Foxboron/sbctl) — Secure Boot key management
+- [nix-gaming](https://github.com/fufexan/nix-gaming) — Gaming on NixOS
+- [Hermes Agent](https://github.com/NousResearch/hermes-agent) — AI coding agent
 
 ## License
 
