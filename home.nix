@@ -102,10 +102,10 @@
       font = {
         size = 11;
         normal.family = "FiraCode Nerd Font Mono";
-	bold.family = "FiraCode Nerd Font Mono";
-	bold.style = "Bold";
-	italic.family = "FiraCode Nerd Font Mono";
-	italic.style = "Italic";
+        bold.family = "FiraCode Nerd Font Mono";
+        bold.style = "Bold";
+        italic.family = "FiraCode Nerd Font Mono";
+        italic.style = "Italic";
       };
     };
   };
