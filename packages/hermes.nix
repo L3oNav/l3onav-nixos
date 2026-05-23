@@ -49,11 +49,10 @@
 
       # Obsidian — local Obsidian vault access via MCP.
       obsidian = {
-        url = "https://127.0.0.1:27124/mcp/";
+        url = "https://127.0.0.1:27123/mcp/";
         headers.Authorization = "Bearer OBSIDIAN_TOKEN_PLACEHOLDER";
         timeout = 30;
       };
-
     };
 
     environmentFiles = [ "/var/lib/hermes/env" ];
