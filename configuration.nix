@@ -13,7 +13,7 @@
     ./declaration.nix
     ./package_configuration/hermes.nix
   ];
-  nixpkgs.config.allowUnfree = true;  
+  nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
@@ -22,19 +22,19 @@
   # Bootloader
   boot = {
     loader = {
-     efi.canTouchEfiVariables = true;
-     systemd-boot.enable = lib.mkForce false;
-     limine = {
-      enable = true;
-      enrollConfig = true;
-      panicOnChecksumMismatch =true;
-      maxGenerations = 10;
-     };
-    };    
+      efi.canTouchEfiVariables = true;
+      systemd-boot.enable = lib.mkForce false;
+      limine = {
+        enable = true;
+        enrollConfig = true;
+        panicOnChecksumMismatch = true;
+        maxGenerations = 10;
+      };
+    };
   };
-  
+
   # Entrada manual para Windows
-   boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   # Rust kernel support is built into linuxPackages_latest via config.
   # To customize kernel features, use extraStructuredConfig:
   # boot.kernelPatches = [{ name = "Rust"; patch = null;
@@ -47,8 +47,8 @@
 
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.supportedLocales = [
-   "en_US.UTF-8/UTF-8"
-   "zh_CN.UTF-8/UTF-8"
+    "en_US.UTF-8/UTF-8"
+    "zh_CN.UTF-8/UTF-8"
   ];
 
   i18n.extraLocaleSettings = {
@@ -78,7 +78,7 @@
     fcitx5 = {
       waylandFrontend = true;
       addons = with pkgs; [
-        qt6Packages.fcitx5-chinese-addons  # ✅ Use the new package name
+        qt6Packages.fcitx5-chinese-addons # ✅ Use the new package name
         fcitx5-gtk
       ];
     };
@@ -140,8 +140,8 @@
     packages = with pkgs; [ thunderbird ];
   };
   nixpkgs.config.permittedInsecurePackages = [
-                "ventoy-1.1.12"
-              ]; 
+    "ventoy-1.1.12"
+  ];
   # System packages
   environment.systemPackages = with pkgs; [
     vim
@@ -188,13 +188,17 @@
     limine-full
   ];
 
-  security.sudo.extraRules = [{
-    users = [ "comrade" ];
-    commands = [{
-      command = "/run/current-system/sw/bin/podman";
-      options = [ "NOPASSWD" ];
-    }];
-  }];
+  security.sudo.extraRules = [
+    {
+      users = [ "comrade" ];
+      commands = [
+        {
+          command = "/run/current-system/sw/bin/podman";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
   hardware.nvidia-container-toolkit.enable = true;
 
   programs.zsh = {
@@ -205,7 +209,7 @@
     '';
   };
   users.users.comrade = {
-   shell = pkgs.zsh;
+    shell = pkgs.zsh;
   };
   users.defaultUserShell = pkgs.zsh;
   system.stateVersion = "25.11";
