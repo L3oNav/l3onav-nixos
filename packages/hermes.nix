@@ -23,7 +23,7 @@
     # ── Model & Provider ─────────────────────────────────────
     settings = {
       model = {
-        default = "deepseek-v5-pro";
+        default = "deepseek-v4-pro";
         base_url = "https://api.deepseek.com/";
       };
 

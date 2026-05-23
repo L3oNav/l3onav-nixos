@@ -158,7 +158,7 @@
     xwallpaper
     pcmanfm
     rofi
-    #_1password-cli
+    _1password-cli
     _1password-gui
     clock-rs
     pipes
@@ -199,7 +199,7 @@
     ripgrep
     tree
     xsel
-
+    ticktick
   ];
 
   security.sudo.extraRules = [
