@@ -152,7 +152,7 @@
     pcmanfm
     rofi
     #_1password-cli
-    #_1password-gui
+    _1password-gui
     clock-rs
     pipes
     killall

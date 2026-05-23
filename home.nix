@@ -28,6 +28,14 @@
 
   home.sessionVariables = {
     EDITOR = "nvim";
+    SSH_AUTH_SOCK = "${config.home.homeDirectory}/.1password/agent.sock";
+  };
+
+  programs.ssh = {
+    enable = true;
+    extraConfig = ''
+      IdentityAgent ${config.home.homeDirectory}/.1password/agent.sock
+    '';
   };
 
   programs.home-manager.enable = true;
@@ -35,10 +43,25 @@
   programs.git = {
     enable = true;
     settings = {
-      user.name = "Leonardo";
-      user.email = "l3onav@example.com";
+      user = {
+        name = "Your Name";
+        email = "email@example.com";
+        signingkey = "SHA256:gOHzZceZAXYwZR0nq/frpwVbWt011l9JcorGBS18Ojk";  # ← Replace with your SSH key fingerprint from 1Password
+      };
       init.defaultBranch = "main";
       push.autoSetupRemote = true;
+      commit.gpgsign = true;
+      gpg.format = "ssh";
+      gpg.ssh.allowedSignersFile = "${config.xdg.configHome}/git/allowed-signers";
+      tag.gpgsign = true;
+      url = {
+        "git@github.com:" = {
+          insteadOf = "https://github.com/";
+        };
+        "git@gitlab.com:" = {
+          insteadOf = "https://gitlab.com/";
+        };
+      };
     };
   };
 
