@@ -151,18 +151,10 @@
   ];
   # System packages
   environment.systemPackages = with pkgs; [
-    vim
-    wget
-    curl
-    gedit
-    xwallpaper
-    pcmanfm
-    rofi
-    _1password-cli
-    _1password-gui
-    clock-rs
-    pipes
-    killall
+    vim wget curl
+    gedit xwallpaper pcmanfm
+    rofi _1password-cli _1password-gui
+    clock-rs pipes killall
     zbar
     ffmpeg
     obsidian
@@ -201,6 +193,7 @@
     xsel
     ticktick
     lmstudio
+    unityhub
   ];
 
   security.sudo.extraRules = [
