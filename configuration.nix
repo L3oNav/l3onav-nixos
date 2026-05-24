@@ -31,7 +31,7 @@
         maxGenerations = 10;
         secureBoot.enable = true;
         extraEntries = ''
-          :Windows
+          /Windows
               protocol: efi_chainload
               comment: Windows 11
               path: boot():/EFI/Microsoft/Boot/bootmgfw.efi
@@ -200,6 +200,7 @@
     tree
     xsel
     ticktick
+    lmstudio
   ];
 
   security.sudo.extraRules = [
