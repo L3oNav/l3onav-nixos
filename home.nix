@@ -229,4 +229,38 @@
       bindkey '^[[1;3C' forward-word
     '';
   };
+
+  programs.mangohud = {
+    enable = true;
+    enableSessionWide = true;
+    settings = {
+      # ── Performance ──────────────────────────────
+      fps = true;
+      frametime = true;
+      fps_limit = 0;
+
+      # ── GPU ──────────────────────────────────────
+      gpu_stats = true;
+      gpu_temp = true;
+      gpu_core_clock = true;
+      gpu_power = true;
+      gpu_mem_clock = true;
+      vram = true;
+
+      # ── CPU ──────────────────────────────────────
+      cpu_stats = true;
+      cpu_temp = true;
+      ram = true;
+
+      # ── Visual / layout ──────────────────────────
+      throttling_status = true;
+      frame_timing = true;
+      text_outline = true;
+      hud_compact = true;
+      round_corners = 6;
+      font_size = 20;
+      background_alpha = 0.4;
+      position = "top-left";
+    };
+  };
 }
