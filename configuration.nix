@@ -69,6 +69,7 @@
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
+
   fonts.packages = with pkgs; [
     noto-fonts-cjk-sans
     noto-fonts-cjk-serif
@@ -85,17 +86,21 @@
     fcitx5 = {
       waylandFrontend = true;
       addons = with pkgs; [
-        # ── Chinese Pinyin ────────────────────────────
         kdePackages.fcitx5-chinese-addons
-
-        # ── IM modules (so apps actually see fcitx5) ──
         fcitx5-gtk                         # GTK apps (GNOME, Firefox, etc.)
+        fcitx5-rime
+        fcitx5-mozc
         kdePackages.fcitx5-qt              # Qt apps (Lutris, Heroic, etc.)
-
-        # ── GUI to add/configure keyboards ───────────
         kdePackages.fcitx5-configtool
       ];
     };
+  };
+
+  # X11 / XWayland apps need these; the fcitx5 module skips them
+  # when waylandFrontend=true, but we have xserver enabled.
+  environment.sessionVariables = {
+    GTK_IM_MODULE = "fcitx";
+    QT_IM_MODULE = "fcitx";
   };
 
   services.gnome.gnome-keyring.enable = true;
