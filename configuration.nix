@@ -85,8 +85,15 @@
     fcitx5 = {
       waylandFrontend = true;
       addons = with pkgs; [
-        qt6Packages.fcitx5-chinese-addons # ✅ Use the new package name
-        fcitx5-gtk
+        # ── Chinese Pinyin ────────────────────────────
+        kdePackages.fcitx5-chinese-addons
+
+        # ── IM modules (so apps actually see fcitx5) ──
+        fcitx5-gtk                         # GTK apps (GNOME, Firefox, etc.)
+        kdePackages.fcitx5-qt              # Qt apps (Lutris, Heroic, etc.)
+
+        # ── GUI to add/configure keyboards ───────────
+        kdePackages.fcitx5-configtool
       ];
     };
   };
@@ -155,36 +162,17 @@
     gedit xwallpaper pcmanfm
     rofi _1password-cli _1password-gui
     clock-rs pipes killall
-    zbar
-    ffmpeg
-    obsidian
-    obs-studio
-    p7zip
-    gnome-shell-extensions
-    quickshell
-    grim
-    gnome-tweaks
-    power-profiles-daemon
-    android-tools
+    zbar ffmpeg obsidian
+    obs-studio p7zip gnome-shell-extensions
+    quickshell grim gnome-tweaks
+    power-profiles-daemon android-tools
     inputs.helium.packages.${system}.default
-    brave
-    mangohud
-    openrazer-daemon
-    protonup-qt
-    lutris
-    bottles
-    heroic
-    polychromatic
-    fcitx5
-    zsh-powerlevel10k
+    brave openrazer-daemon
+    protonup-qt lutris bottles heroic
+    polychromatic fcitx5 zsh-powerlevel10k
     meslo-lgs-nf # Recommended Nerd Font
-    anki
-    libreoffice
-    uv
-    nvidia-container-toolkit
-    ventoy-full
-    sbctl
-    limine-full
+    anki libreoffice uv nvidia-container-toolkit
+    ventoy-full sbctl limine-full
     docker-compose
     docker
     lnav
