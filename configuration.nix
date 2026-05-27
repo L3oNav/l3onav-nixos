@@ -89,7 +89,6 @@
         kdePackages.fcitx5-chinese-addons
         fcitx5-gtk                         # GTK apps (GNOME, Firefox, etc.)
         fcitx5-rime
-        fcitx5-mozc
         kdePackages.fcitx5-qt              # Qt apps (Lutris, Heroic, etc.)
         kdePackages.fcitx5-configtool
       ];
@@ -187,6 +186,7 @@
     ticktick
     lmstudio
     unityhub
+    nodejs_latest
   ];
 
   security.sudo.extraRules = [

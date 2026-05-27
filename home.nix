@@ -262,5 +262,15 @@
       background_alpha = 0.4;
       position = "top-left";
     };
+
+    # ── Hide overlay for these apps ────────────────
+    settingsPerApplication = {
+      zeditor.no_display = true;
+    };
   };
+  home.file.".npmrc".text = ''
+    prefix=/home/comrade/.npm-global
+  '';
+
+  home.sessionPath = [ "$HOME/.npm-global/bin" ];
 }
