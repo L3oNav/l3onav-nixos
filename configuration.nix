@@ -86,11 +86,11 @@
     fcitx5 = {
       waylandFrontend = true;
       addons = with pkgs; [
-        kdePackages.fcitx5-chinese-addons
+        qt6Packages.fcitx5-chinese-addons
         fcitx5-gtk                         # GTK apps (GNOME, Firefox, etc.)
         fcitx5-rime
-        kdePackages.fcitx5-qt              # Qt apps (Lutris, Heroic, etc.)
-        kdePackages.fcitx5-configtool
+        qt6Packages.fcitx5-qt              # Qt apps (Lutris, Heroic, etc.)
+        qt6Packages.fcitx5-configtool
       ];
     };
   };
@@ -186,7 +186,6 @@
     ticktick
     lmstudio
     unityhub
-    nodejs_latest
   ];
 
   security.sudo.extraRules = [
@@ -218,5 +217,6 @@
       # Flakes settings
       package = pkgs.nixVersions.latest;
   };
+  programs.nix-ld.enable = true;
   system.stateVersion = "25.11";
 }
