@@ -6,6 +6,17 @@
   home.stateVersion = "25.11";
 
   home.packages = with pkgs; [
+    # ── Node.js dev ──────────────────────────────
+    nodejs_22
+    pnpm
+    yarn
+
+    # ── Python dev ───────────────────────────────
+    python314
+    sqlite
+    dbeaver-bin
+
+    # ── Tools ────────────────────────────────────
     gh
     jujutsu
     zig
@@ -261,13 +272,19 @@
       font_size = 20;
       background_alpha = 0.4;
       position = "top-left";
+
+      # ── Don't inject into these processes ─────────
+      blacklist = "zeditor,zed-editor,.zed-editor-wrapped";
     };
 
-    # ── Hide overlay for these apps ────────────────
     settingsPerApplication = {
       zeditor.no_display = true;
+      "zed-editor".no_display = true;
+      ".zed-editor-wrapped".no_display = true;
     };
+
   };
+
   home.file.".npmrc".text = ''
     prefix=/home/comrade/.npm-global
   '';
