@@ -23,8 +23,19 @@
     # ── Model & Provider ─────────────────────────────────────
     settings = {
       model = {
-        default = "deepseek-v4-pro";
-        base_url = "https://api.deepseek.com/";
+        provider = "openrouter";
+        default = "deepseek/deepseek-v4-pro";
+      };
+
+      # Per-model overrides (temperature, etc.)
+      providers = {
+        openrouter = {
+          models = {
+            "qwen/qwen3.7-max" = {
+              temperature = 0.3;
+            };
+          };
+        };
       };
 
       # Terminal: run commands locally inside the container
