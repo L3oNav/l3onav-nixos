@@ -7,6 +7,16 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
     historySubstringSearch.enable = true;
+
+    sessionVariables = {
+      ZSH_CACHE_DIR = "${config.xdg.cacheHome}/oh-my-zsh";
+    };
+
+    envExtra = ''
+      # Ensure ZSH cache dir exists before plugins load
+      [[ -d "$ZSH_CACHE_DIR/completions" ]] || mkdir -p "$ZSH_CACHE_DIR/completions"
+    '';
+
     plugins = with pkgs; [
       {
         name = "zsh-completions";
@@ -30,7 +40,7 @@
       }
       {
         name = "autoenv";
-        src = "${oh-my-zsh}/share/oh-my-zsh/plugins/autoenv";
+        src = zsh-autoenv;
       }
       {
         name = "celery";
@@ -143,6 +153,9 @@
 
       # Point Docker clients at the Podman socket
       export DOCKER_HOST="unix:///run/user/1000/podman/podman.sock"
+
+      # Ensure ZSH cache dir exists (used by oh-my-zsh plugins for completions)
+      [[ -d "$ZSH_CACHE_DIR/completions" ]] || mkdir -p "$ZSH_CACHE_DIR/completions"
     '';
   };
 }
