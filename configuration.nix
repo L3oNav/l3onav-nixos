@@ -186,6 +186,8 @@
     ticktick
     lmstudio
     unityhub
+    telegram-desktop
+    beekeeper-studio
   ];
 
   security.sudo.extraRules = [

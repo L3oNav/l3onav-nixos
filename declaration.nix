@@ -34,4 +34,10 @@
     };
   };
   environment.etc."cdi/nvidia.yaml".source = "/run/cdi/nvidia-container-toolkit.json";
+
+  # Symlink /var/run/docker.sock to the Podman socket so tools that
+  # hardcode the Docker socket path work without DOCKER_HOST being set.
+  systemd.tmpfiles.rules = [
+    "L+ /var/run/docker.sock - - - - /run/user/1000/podman/podman.sock"
+  ];
 }
