@@ -12,9 +12,15 @@
       ZSH_CACHE_DIR = "${config.xdg.cacheHome}/oh-my-zsh";
     };
 
-    envExtra = ''
-      # Ensure ZSH cache dir exists before plugins load
-      [[ -d "$ZSH_CACHE_DIR/completions" ]] || mkdir -p "$ZSH_CACHE_DIR/completions"
+    # Set at the top of .zshrc, before plugin loading
+    localVariables = {
+      ZSH_CACHE_DIR = "${config.xdg.cacheHome}/oh-my-zsh";
+    };
+
+    # Runs alongside compinit, before plugin loading
+    completionInit = ''
+      mkdir -p "$ZSH_CACHE_DIR/completions"
+      autoload -U compinit && compinit
     '';
 
     plugins = with pkgs; [
@@ -153,9 +159,6 @@
 
       # Point Docker clients at the Podman socket
       export DOCKER_HOST="unix:///run/user/1000/podman/podman.sock"
-
-      # Ensure ZSH cache dir exists (used by oh-my-zsh plugins for completions)
-      [[ -d "$ZSH_CACHE_DIR/completions" ]] || mkdir -p "$ZSH_CACHE_DIR/completions"
     '';
   };
 }
