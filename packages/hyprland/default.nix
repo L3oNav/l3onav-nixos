@@ -109,47 +109,69 @@
         vrr = 1
     }
 
-    # ── Binds ─────────────────────────────────────
+    # ── Binds (adapted from your Qtile muscle memory) ──
     $mainMod = SUPER
 
-    # Apps
-    bind = $mainMod, RETURN, exec, alacritty
-    bind = $mainMod, Q, killactive,
-    bind = $mainMod, M, exit,
-    bind = $mainMod, E, exec, pcmanfm
-    bind = $mainMod, R, exec, rofi -show drun
-    bind = $mainMod, V, togglefloating,
-    bind = $mainMod, P, pseudo,
-    bind = $mainMod, F, fullscreen,
-    bind = $mainMod, T, togglesplit,
+    # ── Apps ──
+    bind = $mainMod, Return, exec, alacritty
+    bind = $mainMod, b, exec, brave
+    bind = $mainMod, e, exec, pcmanfm
+    bind = $mainMod, space, exec, rofi -show drun
+    bind = $mainMod SHIFT, m, exec, rofi -show window
 
-    # Screenshot
-    bind = , PRINT, exec, grimblast copy area
-    bind = $mainMod, PRINT, exec, grimblast copy active
-    bind = $mainMod SHIFT, PRINT, exec, grimblast copy output
+    # ── Window management ──
+    bind = $mainMod, q, killactive,
+    bind = $mainMod, f, fullscreen,
+    bind = $mainMod SHIFT, f, togglefloating,
+    bind = $mainMod, Tab, cyclenext,
+    bind = $mainMod SHIFT, Tab, cyclenext, prev
+    bind = $mainMod, p, pseudo,
+    bind = $mainMod, t, togglesplit,
 
-    # Lock
-    bind = $mainMod, L, exec, hyprlock
+    # ── Monitor switching ──
+    bind = $mainMod, comma, focusmonitor, l
+    bind = $mainMod, period, focusmonitor, r
+    bind = $mainMod SHIFT, comma, movewindow, mon:l
+    bind = $mainMod SHIFT, period, movewindow, mon:r
 
-    # Move focus
+    # ── Vim-style focus (j/k/h/l) ──
+    bind = $mainMod, h, movefocus, l
+    bind = $mainMod, j, movefocus, d
+    bind = $mainMod, k, movefocus, u
+    bind = $mainMod, l, movefocus, r
+
+    # ── Vim-style window swap ──
+    bind = $mainMod SHIFT, h, movewindow, l
+    bind = $mainMod SHIFT, j, movewindow, d
+    bind = $mainMod SHIFT, k, movewindow, u
+    bind = $mainMod SHIFT, l, movewindow, r
+
+    # ── Arrow fallbacks (same as vim keys) ──
     bind = $mainMod, left, movefocus, l
-    bind = $mainMod, right, movefocus, r
-    bind = $mainMod, up, movefocus, u
     bind = $mainMod, down, movefocus, d
-
-    # Move windows
+    bind = $mainMod, up, movefocus, u
+    bind = $mainMod, right, movefocus, r
     bind = $mainMod SHIFT, left, movewindow, l
-    bind = $mainMod SHIFT, right, movewindow, r
-    bind = $mainMod SHIFT, up, movewindow, u
     bind = $mainMod SHIFT, down, movewindow, d
+    bind = $mainMod SHIFT, up, movewindow, u
+    bind = $mainMod SHIFT, right, movewindow, r
 
-    # Resize
-    binde = $mainMod CTRL, left, resizeactive, -20 0
-    binde = $mainMod CTRL, right, resizeactive, 20 0
-    binde = $mainMod CTRL, up, resizeactive, 0 -20
-    binde = $mainMod CTRL, down, resizeactive, 0 20
+    # ── Resize (Super+Ctrl+h/l like your Qtile grow/shrink) ──
+    binde = $mainMod CTRL, h, resizeactive, -20 0
+    binde = $mainMod CTRL, l, resizeactive, 20 0
+    binde = $mainMod CTRL, j, resizeactive, 0 20
+    binde = $mainMod CTRL, k, resizeactive, 0 -20
 
-    # Switch workspaces
+    # ── Screenshot ──
+    bind = $mainMod, s, exec, grimblast copy area
+    bind = $mainMod SHIFT, s, exec, grimblast copy active
+    bind = , PRINT, exec, grimblast copy area
+
+    # ── Lock / Logout ──
+    bind = $mainMod, L, exec, hyprlock
+    bind = $mainMod SHIFT, q, exec, wlogout
+
+    # ── Workspaces 1-9 ──
     bind = $mainMod, 1, workspace, 1
     bind = $mainMod, 2, workspace, 2
     bind = $mainMod, 3, workspace, 3
@@ -159,9 +181,7 @@
     bind = $mainMod, 7, workspace, 7
     bind = $mainMod, 8, workspace, 8
     bind = $mainMod, 9, workspace, 9
-    bind = $mainMod, 0, workspace, 10
 
-    # Move to workspace
     bind = $mainMod SHIFT, 1, movetoworkspace, 1
     bind = $mainMod SHIFT, 2, movetoworkspace, 2
     bind = $mainMod SHIFT, 3, movetoworkspace, 3
@@ -171,25 +191,24 @@
     bind = $mainMod SHIFT, 7, movetoworkspace, 7
     bind = $mainMod SHIFT, 8, movetoworkspace, 8
     bind = $mainMod SHIFT, 9, movetoworkspace, 9
-    bind = $mainMod SHIFT, 0, movetoworkspace, 10
 
-    # Scroll workspaces
+    # ── Workspace scroll ──
     bind = $mainMod, mouse_down, workspace, e+1
     bind = $mainMod, mouse_up, workspace, e-1
 
-    # Special workspace (scratchpad)
-    bind = $mainMod, S, togglespecialworkspace,
-    bind = $mainMod SHIFT, S, movetoworkspace, special
-
-    # Media keys
+    # ── Media keys ──
     binde = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
     binde = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
     bind = , XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
     bind = , XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
 
-    # Brightness
-    binde = , XF86MonBrightnessUp, exec, brightnessctl set +5%
-    binde = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
+    # ── Brightness (matches your Qtile 10% steps) ──
+    binde = , XF86MonBrightnessUp, exec, brightnessctl set +10%
+    binde = , XF86MonBrightnessDown, exec, brightnessctl set 10%-
+
+    # ── Mouse bindings (Super+drag to move, Super+right-drag to resize) ──
+    bindm = $mainMod, mouse:272, movewindow
+    bindm = $mainMod, mouse:273, resizewindow
 
     # ── Window rules ──────────────────────────────
     windowrule = float, ^(pavucontrol)$
@@ -217,7 +236,15 @@
       "modules-left": ["hyprland/workspaces", "hyprland/window"],
       "modules-center": ["clock"],
       "modules-right": ["tray", "pulseaudio", "network", "cpu", "memory", "battery"],
-      "hyprland/workspaces": { "format": "{icon}", "on-click": "activate" },
+      "hyprland/workspaces": {
+        "format": "{icon}",
+        "on-click": "activate",
+        "all-outputs": false,
+        "persistent-workspaces": {
+          "1": [], "2": [], "3": [], "4": [], "5": [],
+          "6": [], "7": [], "8": [], "9": []
+        }
+      },
       "clock": { "format": "{:%a %b %d  %H:%M}", "tooltip-format": "<big>{:%Y %B}</big>" },
       "pulseaudio": { "format": "{icon} {volume}%", "format-muted": " M", "on-click": "pavucontrol" },
       "network": { "format-wifi": " {signalStrength}%", "format-ethernet": " {ifname}", "format-disconnected": "  " },
