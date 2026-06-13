@@ -246,8 +246,6 @@
 
   # ── Hyprpaper config ────────────────────────────
   xdg.configFile."hypr/hyprpaper.conf".text = ''
-    preload = ${pkgs.nixos-artwork.wallpapers.simple-dark-gray-bottom}/share/artwork/gnome/nixos-logo.png
-    wallpaper = ,${pkgs.nixos-artwork.wallpapers.simple-dark-gray-bottom}/share/artwork/gnome/nixos-logo.png
     splash = false
     ipc = off
   '';
