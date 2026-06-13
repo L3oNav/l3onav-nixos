@@ -11,6 +11,31 @@
     # Let Hyprland handle cursor; no WLR_NO_HARDWARE_CURSORS needed
   };
 
+  # ── Hypridle config ────────────────────────────
+  xdg.configFile."hypr/hypridle.conf".text = ''
+    general {
+        lock_cmd = pidof hyprlock || hyprlock
+        before_sleep_cmd = loginctl lock-session
+        after_sleep_cmd = hyprctl dispatch dpms on
+    }
+
+    listener {
+        timeout = 600       # 10 min — screen off
+        on-timeout = hyprctl dispatch dpms off
+        on-resume = hyprctl dispatch dpms on
+    }
+
+    listener {
+        timeout = 900       # 15 min — lock
+        on-timeout = hyprlock
+    }
+
+    listener {
+        timeout = 1800      # 30 min — suspend
+        on-timeout = systemctl suspend
+    }
+  '';
+
   # ── Hyprland config ──
   xdg.configFile."hypr/hyprland.conf".text = ''
     # ── Monitors ──────────────────────────────────
@@ -35,7 +60,7 @@
     exec-once = waybar
     exec-once = dunst
     exec-once = hyprpaper
-    exec-once = /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 || true
+    exec-once = polkit-gnome-authentication-agent-1 || true
     exec-once = gnome-keyring-daemon --start --components=secrets || true
 
     # ── General ───────────────────────────────────

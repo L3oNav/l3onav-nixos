@@ -102,26 +102,36 @@
 
   services.gnome.gnome-keyring.enable = true;
 
-  # ── Hyprland (Wayland compositor) ──
-  programs.hyprland.enable = true;
-
-  services.displayManager.sddm = {
-    enable = true;
-    wayland.enable = true;
-  };
-
-  # XWayland support (required for SDDM + legacy apps)
+  # ── XServer (required by SDDM) ──
   services.xserver.enable = true;
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
 
-  # XDG Desktop Portal (screensharing, file picker, etc.)
+  # ── SDDM Display Manager (Wayland-native) ──
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true;
+    settings = {
+      Autologin = {
+        Session = "hyprland";
+        User = "comrade";
+      };
+    };
+  };
+  services.displayManager.defaultSession = "hyprland";
+
+  # ── Hyprland (primary Wayland compositor) ──
+  programs.hyprland.enable = true;
+  programs.hyprlock.enable = true;
+  services.hypridle.enable = true;
+
+  # ── XDG Desktop Portal (NO xdg-desktop-portal-hyprland! ──
+  # Hyprland 0.54+ has the portal built-in; external package causes D-Bus conflict)
   xdg.portal = {
     enable = true;
     extraPortals = with pkgs; [
-      xdg-desktop-portal-hyprland
       xdg-desktop-portal-gtk
     ];
   };
@@ -185,6 +195,7 @@
     vim
     wget
     curl
+    gedit
     pcmanfm
     rofi
     _1password-cli
@@ -232,8 +243,6 @@
 
     # ── Hyprland ecosystem ──
     hyprpaper          # wallpaper
-    hyprlock           # screen locker
-    hypridle           # idle daemon
     waybar             # status bar
     dunst              # notification daemon
     wlogout            # logout menu
