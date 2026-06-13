@@ -86,11 +86,8 @@
     fcitx5 = {
       waylandFrontend = true;
       addons = with pkgs; [
-        qt6Packages.fcitx5-chinese-addons
-        fcitx5-gtk                         # GTK apps (GNOME, Firefox, etc.)
-        fcitx5-rime
-        qt6Packages.fcitx5-qt              # Qt apps (Lutris, Heroic, etc.)
-        qt6Packages.fcitx5-configtool
+        qt6Packages.fcitx5-chinese-addons  # pinyin, shuangpin, wubi, etc.
+        fcitx5-rime                         # rime engine (alternative)
       ];
     };
   };
@@ -100,6 +97,7 @@
   environment.sessionVariables = {
     GTK_IM_MODULE = "fcitx";
     QT_IM_MODULE = "fcitx";
+    XMODIFIERS = "@im=fcitx";
   };
 
   services.gnome.gnome-keyring.enable = true;
@@ -162,21 +160,53 @@
   ];
   # System packages
   environment.systemPackages = with pkgs; [
-    vim wget curl
-    gedit xwallpaper pcmanfm
-    rofi _1password-cli _1password-gui
-    clock-rs pipes killall
-    zbar ffmpeg obsidian
-    obs-studio p7zip gnome-shell-extensions
-    quickshell grim gnome-tweaks
-    power-profiles-daemon android-tools
+    # ── Input method (fcitx5) ──
+    fcitx5-gtk                   # GTK2/3/4 IM module
+    libsForQt5.fcitx5-qt          # Qt5 IM module
+    qt6Packages.fcitx5-qt         # Qt6 IM module
+    qt6Packages.fcitx5-configtool # fcitx5 configuration GUI
+
+    # ── Editors & tools ──
+    vim
+    wget
+    curl
+    gedit
+    xwallpaper
+    pcmanfm
+    rofi
+    _1password-cli
+    _1password-gui
+    clock-rs
+    pipes
+    killall
+    zbar
+    ffmpeg
+    obsidian
+    obs-studio
+    p7zip
+    gnome-shell-extensions
+    quickshell
+    grim
+    gnome-tweaks
+    power-profiles-daemon
+    android-tools
     inputs.helium.packages.${system}.default
-    brave openrazer-daemon
-    protonup-qt lutris bottles heroic
-    polychromatic fcitx5 zsh-powerlevel10k
+    brave
+    openrazer-daemon
+    protonup-qt
+    lutris
+    bottles
+    heroic
+    polychromatic
+    zsh-powerlevel10k
     meslo-lgs-nf # Recommended Nerd Font
-    anki libreoffice uv nvidia-container-toolkit
-    ventoy-full sbctl limine-full
+    anki
+    libreoffice
+    uv
+    nvidia-container-toolkit
+    ventoy-full
+    sbctl
+    limine-full
     docker-compose
     docker
     lnav
@@ -205,19 +235,19 @@
   programs.zsh.enable = true;
 
   users.users.comrade = {
-   shell = pkgs.zsh;
+    shell = pkgs.zsh;
   };
   users.defaultUserShell = pkgs.zsh;
   nix = {
-      # Automate garbage collection
-      gc = {
-        automatic = true;
-        dates = "weekly";
-        options = "--delete-older-than 7d";
-      };
+    # Automate garbage collection
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 7d";
+    };
 
-      # Flakes settings
-      package = pkgs.nixVersions.latest;
+    # Flakes settings
+    package = pkgs.nixVersions.latest;
   };
   programs.nix-ld.enable = true;
   system.stateVersion = "25.11";
