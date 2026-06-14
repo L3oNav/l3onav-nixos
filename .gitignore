@@ -13,3 +13,4 @@ result-*
 
 # Nix garbage
 .direnv/
+secrets.nix
