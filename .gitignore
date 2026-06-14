@@ -13,4 +13,7 @@ result-*
 
 # Nix garbage
 .direnv/
+
+# Secrets (keep secrets.nix.example tracked as template)
 secrets.nix
+.git-filter-repo-replacements.txt

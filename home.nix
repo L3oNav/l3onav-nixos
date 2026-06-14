@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, secrets, ... }:
 
 {
   imports = [
@@ -60,9 +60,9 @@
     enable = true;
     settings = {
       user = {
-        name = "Your Name";
-        email = "email@example.com";
-        signingkey = "ssh-ed25519 AAAA_PLACEHOLDER";
+        name = secrets.git.name;
+        email = secrets.git.email;
+        signingkey = secrets.git.signingkey;
       };
       init.defaultBranch = "main";
       push.autoSetupRemote = true;
