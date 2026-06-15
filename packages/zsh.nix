@@ -157,8 +157,8 @@
       bindkey '^[[1;3D' backward-word
       bindkey '^[[1;3C' forward-word
 
-      # Point Docker clients at the Podman socket (uses runtime UID)
-      export DOCKER_HOST="unix:///run/user/$UID/podman/podman.sock"
+      # Point Docker clients at the Podman socket
+      export DOCKER_HOST="unix:///run/user/1000/podman/podman.sock"
     '';
   };
 }

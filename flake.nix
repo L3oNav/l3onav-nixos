@@ -57,27 +57,10 @@
         })
       ];
     in
-    let
-      # secrets.nix is gitignored — read from absolute path (requires --impure)
-      secretsPath = /home/comrade/l3onav-nixos/secrets.nix;
-      secrets =
-        if builtins.pathExists secretsPath
-        then import secretsPath
-        else builtins.throw ''
-          secrets.nix not found at ${toString secretsPath}
-
-          Copy the template first:
-            cp ${toString secretsPath}.example ${toString secretsPath}
-
-          Then edit secrets.nix with your real values.
-          You also need the --impure flag:
-            sudo nixos-rebuild switch --flake .#comrade --impure
-        '';
-    in
     {
       nixosConfigurations.comrade = nixpkgs.lib.nixosSystem {
         inherit system;
-        specialArgs = { inherit inputs secrets; };
+        specialArgs = { inherit inputs; };
         modules = [
           hermes-agent.nixosModules.default
           ./configuration.nix
@@ -91,7 +74,6 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               users.comrade = import ./home.nix;
-              extraSpecialArgs = { inherit secrets; };
             };
           }
         ];

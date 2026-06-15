@@ -370,7 +370,7 @@ services.your-service = {
    ```
 4. Update the allowed signers file:
    ```bash
-   echo "email@example.com ssh-ed25519 AAAAC3NzaC1..." > ~/.config/git/allowed-signers
+   echo "l3onav@outlook.com ssh-ed25519 AAAAC3NzaC1..." > ~/.config/git/allowed-signers
    ```
 
 ### Switching to Stable Nixpkgs

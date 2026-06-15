@@ -1,8 +1,9 @@
-{ config, pkgs, secrets, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = [
     ./packages/zsh.nix
+    ./packages/hyprland
   ];
 
   home.username = "comrade";
@@ -36,7 +37,6 @@
     dive
     discord
     wgnord
-    gnomeExtensions.razer-puppy
     razergenie
     spotify
     postman
@@ -60,9 +60,9 @@
     enable = true;
     settings = {
       user = {
-        name = secrets.git.name;
-        email = secrets.git.email;
-        signingkey = secrets.git.signingkey;
+        name = "Leonardo Nava (L3oNav)";
+        email = "l3onav@outlook.com";
+        signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBwRbVMLmqtlo7TYoOaPWegtlYdlizxBGC+wX9DDWHPq";
       };
       init.defaultBranch = "main";
       push.autoSetupRemote = true;

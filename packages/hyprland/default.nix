@@ -1,213 +1,101 @@
 { config, pkgs, ... }:
 
+let
+  hyprDir = "${config.xdg.configHome}/hypr";
+in
 {
-  imports = [ ];
-
-  # ── NVIDIA environment variables for Wayland ──
+  # ── NVIDIA environment variables for Wayland ─────
+  # (also set in modules/env.lua via hl.env; duplicated
+  #  here so systemd services and other tools see them)
   home.sessionVariables = {
     LIBVA_DRIVER_NAME = "nvidia";
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    # Let Hyprland handle cursor; no WLR_NO_HARDWARE_CURSORS needed
+    NVD_BACKEND = "direct";
   };
 
-  # ── Hyprland config ──
-  xdg.configFile."hypr/hyprland.conf".text = ''
-    # ── Monitors ──────────────────────────────────
-    # Detect automatically; customize with `hyprctl monitors`
-    monitor=,preferred,auto,auto
+  # ── Hyprland (Lua-based) ─────────────────────────
+  xdg.configFile."hypr/hyprland.lua".source = ./hyprland.lua;
 
-    # ── Environment ───────────────────────────────
-    env = XCURSOR_SIZE,24
-    env = QT_QPA_PLATFORM,wayland;xcb
-    env = QT_QPA_PLATFORMTHEME,qt5ct
-    env = QT_WAYLAND_DISABLE_WINDOWDECORATION,1
-    env = GDK_BACKEND,wayland,x11
-    env = CLUTTER_BACKEND,wayland
-    env = SDL_VIDEODRIVER,wayland
-    env = MOZ_ENABLE_WAYLAND,1
-    env = _JAVA_AWT_WM_NONREPARENTING,1
+  # ── Modules ──────────────────────────────────────
+  xdg.configFile."hypr/modules/env.lua".source = ./modules/env.lua;
+  xdg.configFile."hypr/modules/monitors.lua".source = ./modules/monitors.lua;
+  xdg.configFile."hypr/modules/core.lua".source = ./modules/core.lua;
+  xdg.configFile."hypr/modules/autostart.lua".source = ./modules/autostart.lua;
+  xdg.configFile."hypr/modules/binds.lua".source = ./modules/binds.lua;
+  xdg.configFile."hypr/modules/rules.lua".source = ./modules/rules.lua;
 
-    # ── Input method (fcitx5) ─────────────────────
-    exec-once = fcitx5 --replace
-
-    # ── Autostart ─────────────────────────────────
-    exec-once = waybar
-    exec-once = dunst
-    exec-once = hyprpaper
-    exec-once = /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 || true
-    exec-once = gnome-keyring-daemon --start --components=secrets || true
-
-    # ── General ───────────────────────────────────
+  # ── Hypridle ─────────────────────────────────────
+  xdg.configFile."hypr/hypridle.conf".text = ''
     general {
-        gaps_in = 5
-        gaps_out = 10
-        border_size = 2
-        col.active_border = rgba(89b4faee) rgba(b4befecc) 45deg
-        col.inactive_border = rgba(585b70aa)
-        layout = dwindle
-        cursor_inactive_timeout = 3
+        lock_cmd = pidof hyprlock || hyprlock
+        before_sleep_cmd = loginctl lock-session
+        after_sleep_cmd = hyprctl dispatch dpms on
     }
 
-    # ── Decoration ────────────────────────────────
-    decoration {
-        rounding = 10
-        blur {
-            enabled = true
-            size = 5
-            passes = 2
-            new_optimizations = on
-        }
-        drop_shadow = true
-        shadow_range = 12
-        shadow_offset = 3 3
-        col.shadow = rgba(1e1e2e99)
+    listener {
+        timeout = 600
+        on-timeout = hyprctl dispatch dpms off
+        on-resume = hyprctl dispatch dpms on
     }
 
-    # ── Animations ────────────────────────────────
-    animations {
-        enabled = true
-        bezier = myBezier, 0.05, 0.9, 0.1, 1.05
-        animation = windows, 1, 7, myBezier
-        animation = windowsOut, 1, 5, default, popin 80%
-        animation = border, 1, 10, default
-        animation = fade, 1, 7, default
-        animation = workspaces, 1, 6, default
+    listener {
+        timeout = 900
+        on-timeout = hyprlock
     }
 
-    # ── Layout (dwindle) ─────────────────────────
-    dwindle {
-        pseudotile = true
-        preserve_split = true
-        no_gaps_when_only = false
+    listener {
+        timeout = 1800
+        on-timeout = systemctl suspend
     }
-
-    # ── Input ─────────────────────────────────────
-    input {
-        kb_layout = us
-        kb_variant =
-        kb_options =
-        follow_mouse = 1
-        sensitivity = 0
-        touchpad {
-            natural_scroll = true
-        }
-    }
-
-    # ── Gestures ──────────────────────────────────
-    gestures {
-        workspace_swipe = true
-        workspace_swipe_fingers = 3
-    }
-
-    # ── Misc ──────────────────────────────────────
-    misc {
-        force_default_wallpaper = 2
-        disable_hyprland_logo = true
-        disable_splash_rendering = true
-        vfr = true
-        vrr = 1
-    }
-
-    # ── Binds ─────────────────────────────────────
-    $mainMod = SUPER
-
-    # Apps
-    bind = $mainMod, RETURN, exec, alacritty
-    bind = $mainMod, Q, killactive,
-    bind = $mainMod, M, exit,
-    bind = $mainMod, E, exec, pcmanfm
-    bind = $mainMod, R, exec, rofi -show drun
-    bind = $mainMod, V, togglefloating,
-    bind = $mainMod, P, pseudo,
-    bind = $mainMod, F, fullscreen,
-    bind = $mainMod, T, togglesplit,
-
-    # Screenshot
-    bind = , PRINT, exec, grimblast copy area
-    bind = $mainMod, PRINT, exec, grimblast copy active
-    bind = $mainMod SHIFT, PRINT, exec, grimblast copy output
-
-    # Lock
-    bind = $mainMod, L, exec, hyprlock
-
-    # Move focus
-    bind = $mainMod, left, movefocus, l
-    bind = $mainMod, right, movefocus, r
-    bind = $mainMod, up, movefocus, u
-    bind = $mainMod, down, movefocus, d
-
-    # Move windows
-    bind = $mainMod SHIFT, left, movewindow, l
-    bind = $mainMod SHIFT, right, movewindow, r
-    bind = $mainMod SHIFT, up, movewindow, u
-    bind = $mainMod SHIFT, down, movewindow, d
-
-    # Resize
-    binde = $mainMod CTRL, left, resizeactive, -20 0
-    binde = $mainMod CTRL, right, resizeactive, 20 0
-    binde = $mainMod CTRL, up, resizeactive, 0 -20
-    binde = $mainMod CTRL, down, resizeactive, 0 20
-
-    # Switch workspaces
-    bind = $mainMod, 1, workspace, 1
-    bind = $mainMod, 2, workspace, 2
-    bind = $mainMod, 3, workspace, 3
-    bind = $mainMod, 4, workspace, 4
-    bind = $mainMod, 5, workspace, 5
-    bind = $mainMod, 6, workspace, 6
-    bind = $mainMod, 7, workspace, 7
-    bind = $mainMod, 8, workspace, 8
-    bind = $mainMod, 9, workspace, 9
-    bind = $mainMod, 0, workspace, 10
-
-    # Move to workspace
-    bind = $mainMod SHIFT, 1, movetoworkspace, 1
-    bind = $mainMod SHIFT, 2, movetoworkspace, 2
-    bind = $mainMod SHIFT, 3, movetoworkspace, 3
-    bind = $mainMod SHIFT, 4, movetoworkspace, 4
-    bind = $mainMod SHIFT, 5, movetoworkspace, 5
-    bind = $mainMod SHIFT, 6, movetoworkspace, 6
-    bind = $mainMod SHIFT, 7, movetoworkspace, 7
-    bind = $mainMod SHIFT, 8, movetoworkspace, 8
-    bind = $mainMod SHIFT, 9, movetoworkspace, 9
-    bind = $mainMod SHIFT, 0, movetoworkspace, 10
-
-    # Scroll workspaces
-    bind = $mainMod, mouse_down, workspace, e+1
-    bind = $mainMod, mouse_up, workspace, e-1
-
-    # Special workspace (scratchpad)
-    bind = $mainMod, S, togglespecialworkspace,
-    bind = $mainMod SHIFT, S, movetoworkspace, special
-
-    # Media keys
-    binde = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
-    binde = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
-    bind = , XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-    bind = , XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
-
-    # Brightness
-    binde = , XF86MonBrightnessUp, exec, brightnessctl set +5%
-    binde = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
-
-    # ── Window rules ──────────────────────────────
-    windowrule = float, ^(pavucontrol)$
-    windowrule = float, ^(blueman-manager)$
-    windowrule = float, ^(nwg-look)$
-    windowrule = float, ^(qt5ct)$
-    windowrule = float, ^(qt6ct)$
-    windowrule = float, title:^(Picture-in-Picture)$
-    windowrule = tile, ^(brave)$
-
-    windowrulev2 = float, class:^(org.pulseaudio.pavucontrol)$
-    windowrulev2 = float, class:^(blueman-manager)$
-
-    # ── Submap for logout ─────────────────────────
-    bind = $mainMod SHIFT, M, exec, wlogout
   '';
 
-  # ── Waybar config ───────────────────────────────
+  # ── Hyprlock ─────────────────────────────────────
+  xdg.configFile."hypr/hyprlock.conf".text = ''
+    general {
+        hide_cursor = false
+        ignore_empty_input = true
+    }
+
+    background {
+        monitor =
+        color = rgba(30, 30, 46, 1.0)
+    }
+
+    input-field {
+        size = 250, 50
+        outline_thickness = 3
+        dots_size = 0.33
+        dots_spacing = 0.15
+        dots_center = true
+        outer_color = rgba(b4befe, 0.5)
+        inner_color = rgba(30, 30, 46, 0.9)
+        font_color = rgb(cdd6f4)
+        fade_on_empty = false
+        placeholder_text = Password...
+        hide_input = false
+        position = 0, 20
+        halign = center
+        valign = center
+    }
+
+    label {
+        text = cmd[update:1000] date +"%H:%M"
+        color = rgba(cdd6f4, 1)
+        font_size = 64
+        position = 0, -200
+        halign = center
+        valign = center
+    }
+  '';
+
+  # ── Hyprpaper ────────────────────────────────────
+  xdg.configFile."hypr/hyprpaper.conf".text = ''
+    splash = false
+    ipc = off
+  '';
+
+  # ── Waybar ───────────────────────────────────────
   xdg.configFile."waybar/config".text = ''
     {
       "layer": "top",
@@ -217,7 +105,15 @@
       "modules-left": ["hyprland/workspaces", "hyprland/window"],
       "modules-center": ["clock"],
       "modules-right": ["tray", "pulseaudio", "network", "cpu", "memory", "battery"],
-      "hyprland/workspaces": { "format": "{icon}", "on-click": "activate" },
+      "hyprland/workspaces": {
+        "format": "{icon}",
+        "on-click": "activate",
+        "all-outputs": false,
+        "persistent-workspaces": {
+          "1": [], "2": [], "3": [], "4": [], "5": [],
+          "6": [], "7": [], "8": [], "9": []
+        }
+      },
       "clock": { "format": "{:%a %b %d  %H:%M}", "tooltip-format": "<big>{:%Y %B}</big>" },
       "pulseaudio": { "format": "{icon} {volume}%", "format-muted": " M", "on-click": "pavucontrol" },
       "network": { "format-wifi": " {signalStrength}%", "format-ethernet": " {ifname}", "format-disconnected": "  " },
@@ -244,44 +140,7 @@
     tooltip { background: #1e1e2e; border: 1px solid #585b70; border-radius: 6px; }
   '';
 
-  # ── Hyprpaper config ────────────────────────────
-  xdg.configFile."hypr/hyprpaper.conf".text = ''
-    preload = ${pkgs.nixos-artwork.wallpapers.simple-dark-gray-bottom}/share/artwork/gnome/nixos-logo.png
-    wallpaper = ,${pkgs.nixos-artwork.wallpapers.simple-dark-gray-bottom}/share/artwork/gnome/nixos-logo.png
-    splash = false
-    ipc = off
-  '';
-
-  # ── Hyprlock config ─────────────────────────────
-  xdg.configFile."hypr/hyprlock.conf".text = ''
-    background { color = rgba(30,30,46,1.0) }
-    input-field {
-      size = 250, 50
-      outline_thickness = 3
-      dots_size = 0.33
-      dots_spacing = 0.15
-      dots_center = true
-      outer_color = rgba(b4befe, 0.5)
-      inner_color = rgba(30,30,46,0.9)
-      font_color = rgb(cdd6f4)
-      fade_on_empty = false
-      placeholder_text = Password...
-      hide_input = false
-      position = 0, 20
-      halign = center
-      valign = center
-    }
-    label {
-      text = cmd[update:1000] date +"%H:%M"
-      color = rgba(cdd6f4,1)
-      font_size = 64
-      position = 0, -200
-      halign = center
-      valign = center
-    }
-  '';
-
-  # ── Dunst config ────────────────────────────────
+  # ── Dunst ────────────────────────────────────────
   xdg.configFile."dunst/dunstrc".text = ''
     [global]
       monitor = 0
@@ -348,7 +207,7 @@
       timeout = 0
   '';
 
-  # ── wlogout config ──────────────────────────────
+  # ── wlogout ──────────────────────────────────────
   xdg.configFile."wlogout/layout".text = ''
     {
       "label" : "logout",

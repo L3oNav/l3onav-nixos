@@ -1,4 +1,4 @@
-{ config, pkgs, secrets, ... }:
+{ config, pkgs, ... }:
 
 {
   services.hermes-agent = {
@@ -61,7 +61,7 @@
       # Obsidian — local Obsidian vault access via MCP.
       obsidian = {
         url = "https://127.0.0.1:27123/mcp/";
-        headers.Authorization = "Bearer ${secrets.obsidian-bearer-token}";
+        headers.Authorization = "Bearer 57586db1d24a9f1409c825fd1c0f2c9891c8c6d2df2d5695756ce20f7cfd33ab";
         timeout = 30;
       };
     };
