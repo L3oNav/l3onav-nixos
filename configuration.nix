@@ -123,7 +123,15 @@
   services.displayManager.defaultSession = "hyprland";
 
   # ── Hyprland (primary Wayland compositor) ──
-  programs.hyprland.enable = true;
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true;
+  };
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  environment.sessionVariables.WLR_NO_HARDWARE_CURSORS = "1";
+
+  programs.hyprlock.enable = true;
+  services.hypridle.enable = true;
 
   # ── XDG Desktop Portal (NO xdg-desktop-portal-hyprland! ──
   # Hyprland 0.54+ has the portal built-in; external package causes D-Bus conflict)
@@ -243,6 +251,11 @@
     hyprpaper          # wallpaper
     hyprlock           # screen locker
     hypridle           # idle daemon
+    hyprpicker         # color picker
+    hyprcursor         # cursor theme
+    hyprsunset         # sunset theme
+    hyprpolkitagent    # polkit authentication agent
+    pyprland           # Hyprland plugin system
     waybar             # status bar
     dunst              # notification daemon
     wlogout            # logout menu
@@ -250,8 +263,6 @@
     swaybg             # fallback wallpaper
     brightnessctl      # backlight control
     grimblast          # screenshot helper
-    hyprpicker         # color picker
-    polkit_gnome       # authentication agent
     libsForQt5.qt5ct   # Qt5 theming
     qt6Packages.qt6ct  # Qt6 theming
   ];
