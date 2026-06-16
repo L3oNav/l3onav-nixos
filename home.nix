@@ -3,7 +3,6 @@
 {
   imports = [
     ./packages/zsh.nix
-    ./packages/hyprland
   ];
 
   home.username = "comrade";

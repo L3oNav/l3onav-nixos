@@ -102,36 +102,14 @@
 
   services.gnome.gnome-keyring.enable = true;
 
-  # ── XServer (required by SDDM) ──
+  # ── GNOME + GDM ──
   services.xserver.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
-
-  # ── SDDM Display Manager (X11 backend — more stable with NVIDIA) ──
-  services.displayManager.sddm = {
-    enable = true;
-    wayland.enable = false;
-    settings = {
-      Autologin = {
-        Session = "hyprland";
-        User = "comrade";
-      };
-    };
-  };
-  services.displayManager.defaultSession = "hyprland";
-
-  # ── Hyprland (primary Wayland compositor) ──
-  programs.hyprland = {
-    enable = true;
-    withUWSM = true;
-  };
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
-  environment.sessionVariables.WLR_NO_HARDWARE_CURSORS = "1";
-
-  programs.hyprlock.enable = true;
-  services.hypridle.enable = true;
 
   # ── XDG Desktop Portal (NO xdg-desktop-portal-hyprland! ──
   # Hyprland 0.54+ has the portal built-in; external package causes D-Bus conflict)
@@ -247,23 +225,13 @@
     telegram-desktop
     beekeeper-studio
 
-    # ── Hyprland ecosystem ──
-    hyprpaper          # wallpaper
-    hyprlock           # screen locker
-    hypridle           # idle daemon
-    hyprpicker         # color picker
-    hyprcursor         # cursor theme
-    hyprsunset         # sunset theme
-    hyprpolkitagent    # polkit authentication agent
-    hyprlandPlugins.hy3 # hy3: i3-style tiling layout
-    pyprland           # Hyprland plugin system
+    # ── Wayland tools ──
     waybar             # status bar
     dunst              # notification daemon
     wlogout            # logout menu
     wl-clipboard       # Wayland clipboard
-    swaybg             # fallback wallpaper
+    swaybg             # wallpaper
     brightnessctl      # backlight control
-    grimblast          # screenshot helper
     libsForQt5.qt5ct   # Qt5 theming
     qt6Packages.qt6ct  # Qt6 theming
   ];
