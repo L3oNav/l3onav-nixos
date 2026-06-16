@@ -54,6 +54,18 @@
               });
             };
           };
+          # hy3: override to latest master for Hyprland 0.54.3 compat
+          hyprlandPlugins = prev.hyprlandPlugins // {
+            hy3 = prev.hyprlandPlugins.hy3.overrideAttrs (old: {
+              version = "0.54.2.1-unstable-2026-05";
+              src = final.fetchFromGitHub {
+                owner = "outfoxxed";
+                repo = "hy3";
+                rev = "a7282db2d7ca336d3c9faa5d10d75fc43eed37aa";
+                hash = "sha256-P3wwiIfqo89evW7xzI+wOI/qM1WPZBiiSmGNtBmYeVk=";
+              };
+            });
+          };
         })
       ];
     in

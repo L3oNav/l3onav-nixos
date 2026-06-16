@@ -20,7 +20,7 @@ hl.config({
             },
             inactive_border = "rgba(585b70aa)",
         },
-        layout = "dwindle",
+        layout = "hy3",
         cursor_inactive_timeout = 3,
     },
     decoration = {

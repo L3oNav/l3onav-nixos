@@ -5,14 +5,18 @@ let
 in
 {
   # ── NVIDIA environment variables for Wayland ─────
-  # (also set in modules/env.lua via hl.env; duplicated
-  #  here so systemd services and other tools see them)
   home.sessionVariables = {
     LIBVA_DRIVER_NAME = "nvidia";
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     NVD_BACKEND = "direct";
   };
+
+  # ── hy3 plugin loader (.conf loads plugin, then sources Lua) ──
+  xdg.configFile."hypr/hyprland.conf".text = ''
+    plugin = ${pkgs.hyprlandPlugins.hy3}/lib/libhy3.so
+    source = hyprland.lua
+  '';
 
   # ── Hyprland (Lua-based) ─────────────────────────
   xdg.configFile."hypr/hyprland.lua".source = ./hyprland.lua;
@@ -24,6 +28,7 @@ in
   xdg.configFile."hypr/modules/autostart.lua".source = ./modules/autostart.lua;
   xdg.configFile."hypr/modules/binds.lua".source = ./modules/binds.lua;
   xdg.configFile."hypr/modules/rules.lua".source = ./modules/rules.lua;
+  xdg.configFile."hypr/modules/hy3.lua".source = ./modules/hy3.lua;
 
   # ── Hypridle ─────────────────────────────────────
   xdg.configFile."hypr/hypridle.conf".text = ''

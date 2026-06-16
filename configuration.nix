@@ -255,6 +255,7 @@
     hyprcursor         # cursor theme
     hyprsunset         # sunset theme
     hyprpolkitagent    # polkit authentication agent
+    hyprlandPlugins.hy3 # hy3: i3-style tiling layout
     pyprland           # Hyprland plugin system
     waybar             # status bar
     dunst              # notification daemon
