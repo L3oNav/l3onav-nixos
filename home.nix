@@ -125,7 +125,7 @@
     enable = true;
     settings = {
       vim_keys = true;
-      color_theme = "dracula";
+      color_theme = "gruvbox_dark";
     };
   };
 
