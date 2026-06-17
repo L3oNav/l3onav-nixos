@@ -51,7 +51,7 @@ let
 
     if command -v opencode &>/dev/null; then
       cd "$WORKDIR"
-      opencode --prompt "$TASK" --non-interactive
+      opencode run "$TASK" -m openrouter/xiaomi/mimo-v2.5
     else
       echo "❌ OpenCode no encontrado. Verifica que esté instalado."
       exit 1

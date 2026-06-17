@@ -33,4 +33,9 @@
 
   hardware.cpu.amd.updateMicrocode = true;
   powerManagement.cpuFreqGovernor = "performance";
+
+  # ── CUDA toolkit for GPU-accelerated apps (QMD, llama.cpp, etc.) ──
+  environment.systemPackages = with pkgs; [
+    cudaPackages.cudatoolkit
+  ];
 }
