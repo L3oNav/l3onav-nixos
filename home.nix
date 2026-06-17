@@ -3,6 +3,7 @@
 {
   imports = [
     ./packages/zsh.nix
+    ./packages/opencode.nix    # Capa 3: Ejecución (Las Manos)
   ];
 
   home.username = "comrade";

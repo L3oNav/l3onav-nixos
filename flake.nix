@@ -28,6 +28,18 @@
     theme-bobthefish.flake = false;
 
     hermes-agent.url = "github:NousResearch/hermes-agent";
+
+    # ── Capa 1: OpenClaw — Orquestación (gateway systemd 24/7) ──
+    openclaw-nix = {
+      url = "github:Scout-DJ/openclaw-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # ── Capa 3: OpenCode — Ejecución (CLI para programación) ──
+    opencode-flake = {
+      url = "github:Hy4ri/opencode-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -36,6 +48,8 @@
       nixpkgs,
       home-manager,
       hermes-agent,
+      openclaw-nix,
+      opencode-flake,
       nixpkgs-stable,
       nix-gaming,
       ...
@@ -63,9 +77,13 @@
         specialArgs = { inherit inputs; };
         modules = [
           hermes-agent.nixosModules.default
+          openclaw-nix.nixosModules.default
           ./configuration.nix
           {
-            nixpkgs.overlays = overlays;
+            nixpkgs.overlays = overlays ++ [
+              openclaw-nix.overlays.default
+              opencode-flake.overlays.default
+            ];
           }
           home-manager.nixosModules.home-manager
           {
