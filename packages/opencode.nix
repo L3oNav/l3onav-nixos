@@ -98,10 +98,10 @@
             api_url = "https://openrouter.ai/api/v1";
             available_models = [
               {
-                name = "deepseek/deepseek-v4-pro";
-                display_name = "DeepSeek V4 Pro";
+                name = "deepseek/deepseek-v4-flash";
+                display_name = "DeepSeek V4 Flash";
                 max_tokens = 128000;
-                max_output_tokens = 8192;
+                max_output_tokens = 512;
               }
             ];
           };
