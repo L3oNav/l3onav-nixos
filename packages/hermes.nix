@@ -153,4 +153,10 @@
       ripgrep
     ];
   };
+
+  # Fix /var/lib/hermes permissions so comrade (hermes group) can access .hermes
+  system.activationScripts.hermes-permissions = ''
+    chown hermes:hermes /var/lib/hermes /var/lib/hermes/.hermes 2>/dev/null || true
+    chmod 770 /var/lib/hermes /var/lib/hermes/.hermes 2>/dev/null || true
+  '';
 }

@@ -230,8 +230,7 @@
 
     # ── QMD GPU wrapper (shadows npm-installed qmd in PATH) ──
     (import ./packages/qmd-cuda.nix {
-      inherit lib pkgs;
-      inherit (pkgs) writeShellScriptBin runCommand coreutils stdenv vulkan-loader;
+      inherit (pkgs) lib writeShellScriptBin runCommand coreutils stdenv vulkan-loader nodejs_22;
     })
 
     # ── Wayland tools ──
@@ -257,6 +256,33 @@
     }
   ];
   hardware.nvidia-container-toolkit.enable = true;
+
+  # ── QMD MCP daemon (GPU-accelerated search) ──
+  systemd.services.qmd-mcp = {
+    description = "QMD MCP Server — hybrid search for Obsidian vault";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      User = "comrade";
+      Group = "users";
+      ExecStart = "/run/current-system/sw/bin/qmd mcp --http --daemon";
+      Restart = "on-failure";
+      RestartSec = 10;
+
+      # GPU access
+      SupplementaryGroups = [ "render" "video" ];
+      DeviceAllow = "/dev/dri/renderD128 rw";
+    };
+
+    environment = {
+      QMD_EMBED_MODEL = "hf:Qwen/Qwen3-Embedding-4B-GGUF/Qwen3-Embedding-4B-Q4_K_M.gguf";
+      QMD_RERANK_MODEL = "hf:ggml-org/Qwen3-Reranker-0.6B-Q8_0-GGUF/qwen3-reranker-0.6b-q8_0.gguf";
+      QMD_GENERATE_MODEL = "hf:tobil/qmd-query-expansion-1.7B-gguf/qmd-query-expansion-1.7B-q4_k_m.gguf";
+      QMD_EMBED_PARALLELISM = "1";
+    };
+  };
+
   programs.zsh.enable = true;
 
   users.users.comrade = {
