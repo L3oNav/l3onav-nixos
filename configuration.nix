@@ -228,6 +228,12 @@
     telegram-desktop
     beekeeper-studio
 
+    # ── QMD GPU wrapper (shadows npm-installed qmd in PATH) ──
+    (import ./packages/qmd-cuda.nix {
+      inherit lib pkgs;
+      inherit (pkgs) writeShellScriptBin runCommand coreutils stdenv vulkan-loader;
+    })
+
     # ── Wayland tools ──
     waybar             # status bar
     dunst              # notification daemon
