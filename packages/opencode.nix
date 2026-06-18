@@ -51,12 +51,12 @@
         maxTokens = 5000;
       };
       general = {
-        model = "openrouter/qwen/qwen3-235b-a22b-2507";
+        model = "openrouter/deepseek/deepseek-v4-pro";
         maxTokens = 5000;
       };
       title = {
-        model = "openrouter/qwen/qwen3-235b-a22b-2507";
-        maxTokens = 80;
+        model = "openrouter/deepseek/deepseek-v4-flash";
+        maxTokens = 256;
       };
     };
 

@@ -45,6 +45,11 @@
   home.sessionVariables = {
     EDITOR = "nvim";
     SSH_AUTH_SOCK = "${config.home.homeDirectory}/.1password/agent.sock";
+
+    # QMD GPU: tell node-llama-cpp to use Vulkan backend
+    QMD_LLAMA_GPU = "vulkan";
+    # node-llama-cpp Vulkan backend needs 64-bit Vulkan loader + libstdc++ in library paths
+    LD_LIBRARY_PATH = "${pkgs.vulkan-loader}/lib:${pkgs.lib.getLib pkgs.stdenv.cc.cc}/lib";
   };
 
   programs.ssh = {
