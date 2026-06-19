@@ -209,13 +209,15 @@
       position = "top-left";
 
       # ── Don't inject into these processes ─────────
-      blacklist = "zeditor,zed-editor,.zed-editor-wrapped";
+      blacklist = "zeditor,zed-editor,.zed-editor-wrapped,qmd,llama";
     };
 
     settingsPerApplication = {
       zeditor.no_display = true;
       "zed-editor".no_display = true;
       ".zed-editor-wrapped".no_display = true;
+      qmd.no_display = true;
+      llama.no_display = true;
     };
 
   };

@@ -11,7 +11,6 @@
       backend = "podman";
       hostUsers = [ "comrade" ];
       extraOptions = [
-        "--gpus=all"
         "--security-opt=label=disable"
       ];
       # Mount host paths that MCP servers need access to.

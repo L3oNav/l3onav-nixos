@@ -258,10 +258,12 @@
   hardware.nvidia-container-toolkit.enable = true;
 
   # ── QMD MCP daemon (GPU-accelerated search) ──
+  # ON-DEMAND: No arranca al boot. Inícialo con:
+  #   sudo systemctl start qmd-mcp
+  # Se auto-detiene tras 1 hora.
   systemd.services.qmd-mcp = {
     description = "QMD MCP Server — hybrid search for Obsidian vault";
     after = [ "network.target" ];
-    wantedBy = [ "multi-user.target" ];
 
     serviceConfig = {
       User = "comrade";
@@ -270,9 +272,19 @@
       Restart = "on-failure";
       RestartSec = 10;
 
-      # GPU access
+      # ── Resource limits ──────────────────────────
+      MemoryMax = "4G";
+      CPUQuota = "200%";        # max 2 cores
+      Nice = 15;                # baja prioridad de CPU
+      IOSchedulingClass = "idle";
+
+      # ── Auto-stop ────────────────────────────────
+      RuntimeMaxSec = 3600;     # 1 hora máximo, luego se apaga solo
+
+      # ── GPU access ───────────────────────────────
       SupplementaryGroups = [ "render" "video" ];
       DeviceAllow = "/dev/dri/renderD128 rw";
+      DevicePolicy = "closed";
     };
 
     environment = {
@@ -280,6 +292,7 @@
       QMD_RERANK_MODEL = "hf:ggml-org/Qwen3-Reranker-0.6B-Q8_0-GGUF/qwen3-reranker-0.6b-q8_0.gguf";
       QMD_GENERATE_MODEL = "hf:tobil/qmd-query-expansion-1.7B-gguf/qmd-query-expansion-1.7B-q4_k_m.gguf";
       QMD_EMBED_PARALLELISM = "1";
+      QMD_LLAMA_GPU = "vulkan";
     };
   };
 
