@@ -15,6 +15,7 @@
     ./packages/hermes.nix          # Capa 2: Evolución (Cerebro)
     ./packages/openclaw.nix        # Capa 1: Orquestación (Sistema Nervioso)
     ./packages/integration.nix     # Scripts de integración entre capas
+    ./packages/tailscale.nix       # Tailscale VPN — acceso remoto seguro
   ];
   nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = [
