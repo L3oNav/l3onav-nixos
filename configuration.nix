@@ -90,7 +90,7 @@
     fcitx5 = {
       waylandFrontend = true;
       addons = with pkgs; [
-        qt6Packages.fcitx5-chinese-addons  # pinyin, shuangpin, wubi, etc.
+        qt6Packages.fcitx5-chinese-addons   # pinyin, shuangpin, wubi, etc.
         fcitx5-rime                         # rime engine (alternative)
       ];
     };
@@ -318,5 +318,5 @@
   programs.nix-ld.libraries = with pkgs; [
     stdenv.cc.cc.lib
   ];
-  system.stateVersion = "25.11";
+  system.stateVersion = "26.05";
 }

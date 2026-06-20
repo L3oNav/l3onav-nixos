@@ -8,7 +8,7 @@
 
   home.username = "comrade";
   home.homeDirectory = "/home/comrade";
-  home.stateVersion = "25.11";
+  home.stateVersion = "26.05";
 
   home.packages = with pkgs; [
     # ── Node.js dev ──────────────────────────────
@@ -49,9 +49,10 @@
 
   programs.ssh = {
     enable = true;
-    extraConfig = ''
-      IdentityAgent ${config.home.homeDirectory}/.1password/agent.sock
-    '';
+    enableDefaultConfig = false;
+    settings."*" = {
+      identityAgent = "${config.home.homeDirectory}/.1password/agent.sock";
+    };
   };
 
   programs.home-manager.enable = true;
