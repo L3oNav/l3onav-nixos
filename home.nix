@@ -40,6 +40,7 @@
     razergenie
     spotify
     postman
+    prismlauncher
   ];
 
   home.sessionVariables = {
@@ -228,4 +229,19 @@
   '';
 
   home.sessionPath = [ "$HOME/.npm-global/bin" ];
+
+  # Clipboard manager daemon — mantiene el clipboard vivo entre apps
+  systemd.user.services.cliphist = {
+    Unit = {
+      Description = "Wayland clipboard manager daemon";
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --watch ${pkgs.cliphist}/bin/cliphist store";
+      Restart = "on-failure";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
 }

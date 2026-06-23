@@ -121,6 +121,7 @@
     enable = true;
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
+      xdg-desktop-portal-gnome
     ];
   };
 
@@ -238,7 +239,8 @@
     waybar             # status bar
     dunst              # notification daemon
     wlogout            # logout menu
-    wl-clipboard       # Wayland clipboard
+    wl-clipboard       # Wayland clipboard CLI
+    cliphist           # Wayland clipboard manager daemon
     swaybg             # wallpaper
     brightnessctl      # backlight control
     libsForQt5.qt5ct   # Qt5 theming

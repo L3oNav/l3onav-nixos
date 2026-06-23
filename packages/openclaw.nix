@@ -29,11 +29,16 @@
 #   5. Obtener el auth token del gateway (auto-generado en primer arranque):
 #      sudo cat /var/lib/openclaw/auth-token
 # ─────────────────────────────────────────────────────────────────────────────
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   services.openclaw = {
-    enable = true;
+    enable = false;  # Liberado de NixOS — el usuario lo maneja manualmente
 
     # ── Dominio público (opcional) ──────────────────────────────
     # Si tienes un dominio, Caddy configurará TLS automáticamente.
@@ -107,31 +112,25 @@
   };
 
   # ── Integración: Permitir que OpenClaw invoque a Hermes y OpenCode ──
-  # El usuario openclaw necesita acceso a los binarios de Hermes y OpenCode.
-  # Agregamos los paths necesarios al PATH del servicio.
-  systemd.services.openclaw-gateway = {
+  # (Solo aplica cuando el servicio está enabled)
+  systemd.services.openclaw-gateway = lib.mkIf config.services.openclaw.enable {
     path = with pkgs; [
-      # OpenCode CLI
       pkgs.opencode
-      # Herramientas básicas que los agentes pueden necesitar
       git
       ripgrep
       nodejs_22
     ];
 
-    # Variables de entorno adicionales para integración entre capas.
-    # NixOS mergea automáticamente con las definidas por el módulo openclaw.
     environment = {
-      # Path a Hermes para que OpenClaw pueda delegar tareas
       HERMES_BIN = "hermes";
-      # Path a OpenCode para que OpenClaw/Hermes puedan delegar código
       OPENCODE_BIN = "opencode";
-      # Directorio de trabajo para tareas de código
       WORKSPACE_DIR = "/home/comrade";
     };
   };
 
   # ── Grupo compartido para integración ─────────────────────────
-  # Permite que el usuario openclaw acceda a recursos de hermes
-  users.users.openclaw.extraGroups = [ "hermes" ];
+  # (Solo aplica cuando el servicio está enabled)
+  users.users.openclaw = lib.mkIf config.services.openclaw.enable {
+    extraGroups = [ "hermes" ];
+  };
 }
