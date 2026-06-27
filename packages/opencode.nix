@@ -95,10 +95,10 @@
       language_models = {
         openai_compatible = {
           OpenRouter = {
-            api_url = "https://openrouter.ai/api/v1";
+            api_url = "https://api.deepseek.com";
             available_models = [
               {
-                name = "deepseek/deepseek-v4-flash";
+                name = "deepseek/deepseek-v4-pro";
                 display_name = "DeepSeek V4 Flash";
                 max_tokens = 128000;
                 max_output_tokens = 512;

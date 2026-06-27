@@ -33,4 +33,8 @@ in
     environmentFiles = [ "/etc/hermes/env" ];
     addToSystemPackages = true;
   };
+
+  # Archivos creados por el servicio deben ser escribibles por el grupo hermes
+  # (para que comrade, miembro del grupo, pueda usar el CLI sin errores de permiso)
+  systemd.services.hermes-agent.serviceConfig.UMask = "0002";
 }
