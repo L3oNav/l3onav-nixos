@@ -42,6 +42,17 @@ in
   # ── Managed mode marker ────────────────────────────────────────────
   home.file.".hermes/.managed".text = "";
 
+  # ── MCP Servers ────────────────────────────────────────────────────
+  home.file.".hermes/config.yaml".text = builtins.toJSON {
+    mcp_servers = {
+      blender = {
+        command = "${pkgs.uv}/bin/uvx";
+        args = [ "blender-mcp" ];
+        enabled = true;
+      };
+    };
+  };
+
   # ── Directorios runtime ────────────────────────────────────────────
   home.file.".hermes/cron/.keep".text = "";
   home.file.".hermes/sessions/.keep".text = "";
