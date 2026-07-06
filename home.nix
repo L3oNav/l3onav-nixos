@@ -4,6 +4,7 @@
   imports = [
     ./packages/zsh.nix
     ./packages/opencode.nix    # Capa 3: Ejecución (Las Manos)
+    ./packages/hermes-home.nix # Capa 2: Evolución (Cerebro) — Home Manager
   ];
 
   home.username = "comrade";

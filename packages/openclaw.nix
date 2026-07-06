@@ -122,15 +122,12 @@
     ];
 
     environment = {
-      HERMES_BIN = "hermes";
       OPENCODE_BIN = "opencode";
       WORKSPACE_DIR = "/home/comrade";
     };
   };
 
-  # ── Grupo compartido para integración ─────────────────────────
-  # (Solo aplica cuando el servicio está enabled)
-  users.users.openclaw = lib.mkIf config.services.openclaw.enable {
-    extraGroups = [ "hermes" ];
-  };
+  # ── Integración con Hermes (Home Manager user service) ─────────
+  # Hermes ahora corre como servicio de usuario (comrade), no como
+  # servicio de sistema con usuario hermes. No se necesita grupo extra.
 }

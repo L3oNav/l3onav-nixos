@@ -195,10 +195,10 @@ let
 
     # Capa 2: Hermes
     echo "  ── Capa 2: Hermes (Evolución) ──"
-    if systemctl is-active --quiet hermes-agent; then
-      echo "  ✅ hermes-agent: ACTIVO"
+    if systemctl --user is-active --quiet hermes-agent 2>/dev/null; then
+      echo "  ✅ hermes-agent (user): ACTIVO"
     else
-      echo "  ⚠️  hermes-agent: INACTIVO (puede ser normal si corre bajo demanda)"
+      echo "  ⚠️  hermes-agent (user): INACTIVO (puede ser normal si corre bajo demanda)"
     fi
     if command -v hermes &>/dev/null; then
       echo "  ✅ hermes CLI: disponible"

@@ -76,11 +76,13 @@
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
-          hermes-agent.nixosModules.default
           openclaw-nix.nixosModules.default
           ./configuration.nix
           {
             nixpkgs.overlays = overlays ++ [
+              (final: prev: {
+                hermes-agent = hermes-agent.packages.${prev.system}.default;
+              })
               openclaw-nix.overlays.default
               opencode-flake.overlays.default
             ];
