@@ -15,6 +15,35 @@
     clock24 = true;
 
     extraConfig = ''
+      # -- status bar style --
+      set-option -g status-style "fg=#ebdbb2,bg=#282828"
+      set-option -g status-left-length 30
+      set-option -g status-right-length 80
+
+      # left: session name
+      set-option -g status-left "#[fg=#282828,bg=#b8bb26,bold] #S #[fg=#b8bb26,bg=#282828,nobold]"
+
+      # window list in the middle
+      set-window-option -g window-status-format "#[fg=#928374,bg=#282828] #I:#W "
+      set-window-option -g window-status-current-format "#[fg=#282828,bg=#458588,bold] #I:#W #[fg=#458588,bg=#282828,nobold]"
+      set-window-option -g window-status-separator ""
+
+      # right: date + time + hostname
+      set-option -g status-right "#[fg=#d79921,bg=#282828] %Y-%m-%d %H:%M #[fg=#b16286,bg=#282828] #h "
+
+      # pane border
+      set-option -g pane-border-style "fg=#928374"
+      set-option -g pane-active-border-style "fg=#458588"
+
+      # message style
+      set-option -g message-style "fg=#ebdbb2,bg=#458588"
+
+      # mode style (copy mode highlight)
+      set-option -g mode-style "fg=#282828,bg=#d79921,bold"
+
+      # update status bar every 15 seconds
+      set-option -g status-interval 15
+
       set-option -ga terminal-overrides ",alacritty:Tc"
       set-option -ga terminal-overrides ",xterm-256color:Tc"
 
@@ -68,9 +97,6 @@
       bind -T copy-mode-vi Enter send -X copy-pipe-and-cancel "${pkgs.wl-clipboard}/bin/wl-copy"
       bind C-y run-shell "${pkgs.wl-clipboard}/bin/wl-paste -n 2>/dev/null | tmux load-buffer - \; paste-buffer"
 
-      # update status bar every 15 seconds
-      set-option -g status-interval 15
-
       # smart pane switching with awareness of vim splits
       is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
     '';
@@ -79,34 +105,5 @@
       sensible
       yank
     ];
-
-    # Gruvbox dark themed status bar
-    extraConfigBeforePlugins = ''
-      # -- status bar style --
-      set-option -g status-style "fg=#ebdbb2,bg=#282828"
-      set-option -g status-left-length 30
-      set-option -g status-right-length 80
-
-      # left: session name
-      set-option -g status-left "#[fg=#282828,bg=#b8bb26,bold] #S #[fg=#b8bb26,bg=#282828,nobold]"
-
-      # window list in the middle
-      set-window-option -g window-status-format "#[fg=#928374,bg=#282828] #I:#W "
-      set-window-option -g window-status-current-format "#[fg=#282828,bg=#458588,bold] #I:#W #[fg=#458588,bg=#282828,nobold]"
-      set-window-option -g window-status-separator ""
-
-      # right: date + time + hostname
-      set-option -g status-right "#[fg=#d79921,bg=#282828] %Y-%m-%d %H:%M #[fg=#b16286,bg=#282828] #h "
-
-      # pane border
-      set-option -g pane-border-style "fg=#928374"
-      set-option -g pane-active-border-style "fg=#458588"
-
-      # message style
-      set-option -g message-style "fg=#ebdbb2,bg=#458588"
-
-      # mode style (copy mode highlight)
-      set-option -g mode-style "fg=#282828,bg=#d79921,bold"
-    '';
   };
 }
