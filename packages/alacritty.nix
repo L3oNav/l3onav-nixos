@@ -8,6 +8,11 @@
         live_config_reload = true;
       };
 
+      shell = {
+        program = "${pkgs.tmux}/bin/tmux";
+        args = [ "new-session" "-A" "-s" "main" ];
+      };
+
       env = {
         TERM = "alacritty";
       };
@@ -91,7 +96,7 @@
             binding = { key = "U"; mods = "Control|Shift"; };
           }
           {
-            regex = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
+            regex = "(?-u:\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b)";
             command = "xdg-open";
             post_processing = true;
             mouse = { enabled = true; };
