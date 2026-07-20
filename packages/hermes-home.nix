@@ -50,6 +50,11 @@ in
         args = [ "blender-mcp" ];
         enabled = true;
       };
+      anki = {
+        command = "npx";
+        args = [ "mcp-remote" "http://127.0.0.1:3141" ];
+        enabled = true;
+      };
     };
   };
 

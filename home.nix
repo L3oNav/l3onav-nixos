@@ -5,6 +5,8 @@
     ./packages/zsh.nix
     ./packages/opencode.nix    # Capa 3: Ejecución (Las Manos)
     ./packages/hermes-home.nix # Capa 2: Evolución (Cerebro) — Home Manager
+    ./packages/alacritty.nix
+    ./packages/tmux.nix
   ];
 
   home.username = "comrade";
@@ -28,7 +30,7 @@
     zig
     nushell
     fastfetch
-    zellij
+    tmux
     zed-editor
     ripgrep
     fd

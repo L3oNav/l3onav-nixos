@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "nixos": {
+      "source": "jwiegley/claude-prompts",
+      "sourceType": "github",
+      "skillPath": "skills/nixos/SKILL.md",
+      "computedHash": "e507bf6c269052be4b140b28f700a0238f8c0e589bf4442fe656f53c6dc8b2ba"
+    },
+    "nixos-best-practices": {
+      "source": "lihaoze123/my-skills",
+      "sourceType": "github",
+      "skillPath": "skills/nixos-best-practices/SKILL.md",
+      "computedHash": "eef05314101f6ba0ce1b6743eed54432912af05d643e433c101a524f6adf6615"
+    }
+  }
+}
