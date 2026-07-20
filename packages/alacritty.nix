@@ -8,9 +8,11 @@
         live_config_reload = true;
       };
 
-      shell = {
-        program = "${pkgs.tmux}/bin/tmux";
-        args = [ "new-session" "-A" "-s" "main" ];
+      terminal = {
+        shell = {
+          program = "${pkgs.tmux}/bin/tmux";
+          args = [ "new-session" "-A" "-s" "main" ];
+        };
       };
 
       env = {
