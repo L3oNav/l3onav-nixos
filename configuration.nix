@@ -212,7 +212,7 @@
     zsh-powerlevel10k
     meslo-lgs-nf # Recommended Nerd Font
     anki
-    libreoffice
+    onlyoffice-desktopeditors
     uv
     nvidia-container-toolkit
     ventoy-full
