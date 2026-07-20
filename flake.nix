@@ -40,6 +40,10 @@
       url = "github:Hy4ri/opencode-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    timer-tui = {
+      url = "git@github.com:sectore/timr-tui.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -52,6 +56,7 @@
       opencode-flake,
       nixpkgs-stable,
       nix-gaming,
+      timer-tui,
       ...
     }@inputs:
     let
