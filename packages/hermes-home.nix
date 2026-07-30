@@ -46,7 +46,7 @@ in
   home.file.".hermes/config.yaml".text = builtins.toJSON {
     mcp_servers = {
       blender = {
-        command = "${pkgs.uv}/bin/uvx";
+        command = "uvx";
         args = [ "blender-mcp" ];
         enabled = true;
       };

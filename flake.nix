@@ -41,6 +41,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    timer-tui = {
+      url = "github:sectore/timr-tui";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -53,6 +58,7 @@
       opencode-flake,
       nixpkgs-stable,
       nix-gaming,
+      timer-tui,
       ...
     }@inputs:
     let

@@ -25,7 +25,7 @@
           y = 10;
         };
         dynamic_padding = true;
-        opacity = 0.92;
+        opacity = 1;
         decorations = "full";
         title = "Alacritty";
       };

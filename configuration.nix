@@ -202,6 +202,7 @@
     power-profiles-daemon
     android-tools
     inputs.helium.packages.${system}.default
+    inputs.timer-tui.packages.${system}.timr
     brave
     openrazer-daemon
     protonup-qt
