@@ -233,6 +233,19 @@
 
   home.sessionPath = [ "$HOME/.npm-global/bin" ];
 
+  home.activation.reloadGnomeShell = config.lib.dag.entryAfter [ "writeBoundary" ] ''
+    if pgrep -x gnome-shell > /dev/null 2>&1; then
+      DBUS_SOCK="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/bus"
+      if [ -S "$DBUS_SOCK" ]; then
+        DBUS_SESSION_BUS_ADDRESS="unix:path=$DBUS_SOCK" \
+        ${pkgs.dbus}/bin/dbus-send --session --type=method_call \
+          --dest=org.gnome.Shell /org/gnome/Shell \
+          org.gnome.Shell.Eval \
+          string:'Meta.restart("Restarting after NixOS rebuild")'
+      fi
+    fi
+  '';
+
   # Clipboard manager daemon — mantiene el clipboard vivo entre apps
   systemd.user.services.cliphist = {
     Unit = {
