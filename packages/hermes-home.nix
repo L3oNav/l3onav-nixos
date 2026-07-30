@@ -15,10 +15,11 @@
 #
 # ⚠️ secrets.nix está gitignored → rebuild requiere flag --impure
 # ─────────────────────────────────────────────────────────────────────────────
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 let
-  secrets = import /home/comrade/l3onav-nixos/secrets.nix;
+  configRoot = "/home/comrade/l3onav-nixos";
+  secrets = import (configRoot + "/secrets.nix");
   hermesHome = "${config.home.homeDirectory}/.hermes";
 in
 {

@@ -155,6 +155,7 @@
   users.users.comrade = {
     isNormalUser = true;
     description = "Leonardo";
+    shell = pkgs.zsh;
     extraGroups = [
       "networkmanager"
       "wheel"
@@ -179,62 +180,27 @@
     qt6Packages.fcitx5-qt         # Qt6 IM module
     qt6Packages.fcitx5-configtool # fcitx5 configuration GUI
 
-    # ── Editors & tools ──
+    # ── Base tools ──
     vim
     wget
     curl
-    gedit
-    pcmanfm
-    rofi
     _1password-cli
     _1password-gui
-    clock-rs
-    pipes
     killall
-    zbar
     ffmpeg
-    obsidian
-    obs-studio
     p7zip
-    quickshell
-    grim
-    slurp
+    tree
+
+    # ── System services ──
     power-profiles-daemon
     android-tools
-    inputs.helium.packages.${system}.default
-    inputs.timer-tui.packages.${system}.timr
-    brave
     openrazer-daemon
-    protonup-qt
-    lutris
-    bottles
-    heroic
-    polychromatic
-    zsh-powerlevel10k
-    meslo-lgs-nf # Recommended Nerd Font
-    anki
-    onlyoffice-desktopeditors
-    uv
     nvidia-container-toolkit
     ventoy-full
     sbctl
     limine-full
     docker-compose
     docker
-    lnav
-    ripgrep
-    tree
-    ticktick
-    lmstudio
-    unityhub
-    telegram-desktop
-    beekeeper-studio
-    davinci-resolve
-
-    # ── QMD GPU wrapper (shadows npm-installed qmd in PATH) ──
-    (import ./packages/qmd-cuda.nix {
-      inherit (pkgs) lib writeShellScriptBin runCommand coreutils stdenv vulkan-loader nodejs_22;
-    })
 
     # ── Wayland tools ──
     waybar             # status bar
@@ -301,10 +267,6 @@
   };
 
   programs.zsh.enable = true;
-
-  users.users.comrade = {
-    shell = pkgs.zsh;
-  };
   users.defaultUserShell = pkgs.zsh;
   nix = {
     # Automate garbage collection

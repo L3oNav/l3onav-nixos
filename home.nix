@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
   imports = [
@@ -24,7 +24,7 @@
     sqlite
     dbeaver-bin
 
-    # ── Tools ────────────────────────────────────
+    # ── CLI tools ────────────────────────────────
     gh
     jujutsu
     zig
@@ -38,12 +38,59 @@
     podman-tui
     podman-compose
     dive
-    discord
     wgnord
-    razergenie
+    uv
+
+    # ── GUI apps ─────────────────────────────────
+    discord
     spotify
     postman
+    brave
+    obsidian
+    obs-studio
+    anki
+    onlyoffice-desktopeditors
+    ticktick
+    lmstudio
+    unityhub
+    telegram-desktop
+    beekeeper-studio
+    davinci-resolve
+
+    # ── Gaming ───────────────────────────────────
     prismlauncher
+    protonup-qt
+    lutris
+    bottles
+    heroic
+
+    # ── Desktop tools ────────────────────────────
+    gedit
+    pcmanfm
+    rofi
+    clock-rs
+    pipes
+    zbar
+    quickshell
+    grim
+    slurp
+    razergenie
+    polychromatic
+
+    # ── Fonts & themes ───────────────────────────
+    zsh-powerlevel10k
+    meslo-lgs-nf
+
+    # ── Log viewer ───────────────────────────────
+    lnav
+
+    # ── QMD GPU wrapper (shadows npm-installed qmd in PATH) ──
+    (import ./packages/qmd-cuda.nix {
+      inherit (pkgs) lib writeShellScriptBin runCommand coreutils stdenv vulkan-loader nodejs_22;
+    })
+  ] ++ [
+    inputs.helium.packages.${pkgs.system}.default
+    inputs.timer-tui.packages.${pkgs.system}.timr
   ];
 
   home.sessionVariables = {

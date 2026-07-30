@@ -101,6 +101,9 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               users.comrade = import ./home.nix;
+              extraSpecialArgs = {
+                inherit inputs nixpkgs-stable system;
+              };
             };
           }
         ];
