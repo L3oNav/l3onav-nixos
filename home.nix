@@ -83,6 +83,7 @@
 
     # ── Log viewer ───────────────────────────────
     lnav
+    xclicker
 
     # ── QMD GPU wrapper (shadows npm-installed qmd in PATH) ──
     (import ./packages/qmd-cuda.nix {

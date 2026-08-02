@@ -45,6 +45,7 @@ in
 
   # ── MCP Servers ────────────────────────────────────────────────────
   home.file.".hermes/config.yaml".text = builtins.toJSON {
+
     mcp_servers = {
       blender = {
         command = "uvx";
@@ -55,6 +56,13 @@ in
         command = "npx";
         args = [ "mcp-remote" "http://127.0.0.1:3141" ];
         enabled = true;
+      };
+      sequential_thinking = {
+        command = "npx";
+        args = [
+          "-y",
+          "@modelcontextprotocol/server-sequential-thinking"
+        ];
       };
     };
   };
