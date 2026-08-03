@@ -64,18 +64,25 @@
     let
       system = "x86_64-linux";
       overlays = [
-        (final: prev: {
-          openldap = prev.openldap.overrideAttrs (_: {
-            doCheck = false;
-          });
-          python3 = prev.python3.override {
-            packageOverrides = pyFinal: pyPrev: {
-              tpm2-pytss = pyPrev.tpm2-pytss.overridePythonAttrs (_: {
-                doCheck = false;
-              });
+        (final: prev:
+          {
+            openldap = prev.openldap.overrideAttrs (_: {
+              doCheck = false;
+            });
+            python3 = prev.python3.override {
+              packageOverrides = pyFinal: pyPrev: {
+                tpm2-pytss = pyPrev.tpm2-pytss.overridePythonAttrs (_: {
+                  doCheck = false;
+                });
+              };
             };
-          };
-        })
+            anki = prev.anki.overrideAttrs (oldAttrs: {
+              buildPhase = builtins.replaceStrings
+                [ "uv export --project qt --extra qt --extra audio" "uv export --project pylib | strip_versions" ]
+                [ "uv export --project qt --extra qt --extra audio --no-dev" "uv export --project pylib --no-dev | strip_versions" ]
+                oldAttrs.buildPhase;
+            });
+          })
       ];
     in
     {
