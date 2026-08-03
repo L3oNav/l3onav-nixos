@@ -60,7 +60,7 @@ in
       sequential_thinking = {
         command = "npx";
         args = [
-          "-y",
+          "-y"
           "@modelcontextprotocol/server-sequential-thinking"
         ];
       };
