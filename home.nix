@@ -19,6 +19,12 @@
     pnpm
     yarn
 
+    # ── Rust dev ─────────────────────────────────
+    rustup                    # gestor de toolchains (cargo, rustc, rustfmt, clippy, rust-analyzer)
+    cargo-edit                # cargo add/remove/upgrade
+    cargo-audit               # auditoría de vulnerabilidades
+    cargo-nextest             # test runner rápido
+
     # ── Python dev ───────────────────────────────
     python314
     sqlite
@@ -84,6 +90,7 @@
     # ── Log viewer ───────────────────────────────
     lnav
     xclicker
+    zotero
 
     # ── QMD GPU wrapper (shadows npm-installed qmd in PATH) ──
     (import ./packages/qmd-cuda.nix {
@@ -232,7 +239,7 @@
     prefix=/home/comrade/.npm-global
   '';
 
-  home.sessionPath = [ "$HOME/.npm-global/bin" ];
+  home.sessionPath = [ "$HOME/.npm-global/bin" "$HOME/.cargo/bin" ];
 
   home.activation.reloadGnomeShell = config.lib.dag.entryAfter [ "writeBoundary" ] ''
     if pgrep -x gnome-shell > /dev/null 2>&1; then

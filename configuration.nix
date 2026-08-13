@@ -131,7 +131,7 @@
 
   # Sound with PipeWire
   services.dbus.enable = true;
-  services.dbus.implementation = "broker";
+  services.dbus.implementation = lib.mkDefault "dbus";
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {

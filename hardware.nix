@@ -22,6 +22,8 @@
     enable32Bit = true;
   };
 
+  hardware.firmware = with pkgs; [ sof-firmware ];
+
   services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.nvidia = {
