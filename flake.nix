@@ -96,6 +96,25 @@
             nixpkgs.overlays = overlays ++ [
               (final: prev: {
                 hermes-agent = hermes-agent.packages.${prev.system}.default;
+                # Hermes Desktop: el rev fijado no genera la entrada .desktop
+                # (añadida en main). La generamos aquí hasta que se actualice.
+                hermes-agent-desktop = (hermes-agent.packages.${prev.system}.desktop).overrideAttrs (old: {
+                  installPhase = old.installPhase + ''
+                    mkdir -p $out/share/applications $out/share/icons/hicolor/1024x1024/apps
+                    install -m 0644 ${hermes-agent}/apps/desktop/assets/icon.png \
+                      $out/share/icons/hicolor/1024x1024/apps/hermes.png
+                    cat > $out/share/applications/hermes.desktop <<EOF
+                    [Desktop Entry]
+                    Type=Application
+                    Name=Hermes Desktop
+                    Comment=Native desktop app for Hermes Agent
+                    Exec=$out/bin/hermes-desktop
+                    Icon=hermes
+                    Terminal=false
+                    Categories=Utility;Network;
+                    EOF
+                  '';
+                });
               })
               openclaw-nix.overlays.default
               opencode-flake.overlays.default

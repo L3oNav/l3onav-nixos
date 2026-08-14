@@ -62,6 +62,7 @@
     telegram-desktop
     beekeeper-studio
     davinci-resolve
+    limo
 
     # ── Gaming ───────────────────────────────────
     prismlauncher

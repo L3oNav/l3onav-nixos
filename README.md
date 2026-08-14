@@ -121,11 +121,13 @@ Edita `packages/openclaw.nix`:
 
 ### Hermes (Capa 2)
 
-Edita `packages/hermes.nix`:
+Edita `packages/hermes-home.nix`:
 
 - `settings.model.default`: Modelo por defecto
 - `mcpServers`: Servidores MCP (Anki, Obsidian, QMD)
 - `container.extraVolumes`: Volúmenes montados
+
+**Hermes Desktop** — GUI nativa (Electron) incluida. Lánzala con `hermes-desktop` (alias `hd`) o `hermes desktop` desde el CLI. Reutiliza la misma config, API key, sesiones y skills de `~/.hermes`.
 
 ### OpenCode (Capa 3)
 
@@ -138,7 +140,7 @@ Edita `packages/opencode.nix`:
 ## 📚 Recursos
 
 - [OpenClaw](https://github.com/openclaw/openclaw) — Gateway de agentes
-- [Hermes Agent](https://github.com/NousResearch/hermes-agent) — Agente con aprendizaje
+- [Hermes Agent](https://github.com/NousResearch/hermes-agent) — Agente con aprendizaje (incluye Hermes Desktop)
 - [OpenCode](https://github.com/opencode-ai/opencode) — CLI de programación
 - [NixOS](https://nixos.org/) — Sistema operativo declarativo
 

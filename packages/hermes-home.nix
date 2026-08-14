@@ -8,6 +8,7 @@
 #   hermes chat              → chat interactivo
 #   hc                       → alias para hermes chat
 #   hermes config            → ver config generada
+#   hermes-desktop / hd      → Hermes Desktop (GUI Electron)
 #   systemctl --user status hermes-agent  → estado del servicio gateway
 #
 # El API key se toma de secrets.nix y se escribe en ~/.hermes/.env.
@@ -26,6 +27,7 @@ in
   # ── Paquete + CLI ──────────────────────────────────────────────────
   home.packages = with pkgs; [
     hermes-agent
+    hermes-agent-desktop # Hermes Desktop — GUI (Electron), reutiliza ~/.hermes
   ];
 
   # ── Entorno ────────────────────────────────────────────────────────
@@ -78,6 +80,7 @@ in
   home.shellAliases = {
     hc = "hermes chat";
     hcfg = "hermes config";
+    hd = "hermes-desktop";
   };
 
   # ── Servicio gateway (systemd user unit) ───────────────────────────
